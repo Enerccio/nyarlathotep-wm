@@ -40,28 +40,30 @@ void gl_call(const char *func, uint32_t line, const char *glfunc) {
 #define GL_CALL(x) x; gl_call(__PRETTY_FUNCTION__, __LINE__, __STRING(x))
 
 static GLuint create_shader(const char *source, GLenum shader_type) {
-   GLuint shader = glCreateShader(shader_type);
-   if (shader == 0)
-	   abort();
+	GLuint shader = glCreateShader(shader_type);
+	if (shader == 0)
+		abort();
 
-   GL_CALL(glShaderSource(shader, 1, (const char**)&source, NULL));
-   GL_CALL(glCompileShader(shader));
+	GL_CALL(glShaderSource(shader, 1, (const char**)&source, NULL));
+	GL_CALL(glCompileShader(shader));
 
-   GLint status;
-   GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &status));
-   if (!status) {
-      GLsizei len;
-      char log[1024];
-      GL_CALL(glGetShaderInfoLog(shader, sizeof(log), &len, log));
+	GLint status;
+	GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &status));
+	if (!status) {
+		GLsizei len;
+		char log[1024];
+		GL_CALL(glGetShaderInfoLog(shader, sizeof(log), &len, log));
 
-      char msg[2048];
-      sprintf(msg, "Compiling %s: %*s\n", (shader_type == GL_VERTEX_SHADER ? "vertex" : "fragment"), len, log);
+		char msg[2048];
+		sprintf(msg, "Compiling %s: %*s\n",
+				(shader_type == GL_VERTEX_SHADER ? "vertex" : "fragment"), len,
+				log);
 
-      logger_callback(WLC_LOG_ERROR, msg);
-      abort();
-   }
+		logger_callback(WLC_LOG_ERROR, msg);
+		abort();
+	}
 
-   return shader;
+	return shader;
 }
 
 void context_open(wlc_handle output) {
@@ -70,34 +72,34 @@ void context_open(wlc_handle output) {
 		return;
 
 	char* vertex_shader = "#version 110\n"
-				"precision mediump float;\n"
-				"\n"
-				"uniform vec2 resolution;\n"
-				"uniform vec2 origin;\n"
-				"attribute vec4 position;\n"
-				"attribute vec2 uv;\n"
-				"varying vec2 v_uv;\n"
-				"\n"
-				"void main() {\n"
-				"	mat4 ortho = mat4(\n"
-				"		2.0/resolution.x,         0,          0,      0,\n"
-				"		0,        -2.0/resolution.y,          0,      0,\n"
-				"		0,                        0,         -1,      0,\n"
-				"		-1,                       1,          0,      1\n"
-				"	);\n"
-				"	gl_Position = ortho * (vec4(origin, 0, 0) + position);\n"
-				"	v_uv = uv;\n"
-				"}\n";
+			"precision mediump float;\n"
+			"\n"
+			"uniform vec2 resolution;\n"
+			"uniform vec2 origin;\n"
+			"attribute vec4 position;\n"
+			"attribute vec2 uv;\n"
+			"varying vec2 v_uv;\n"
+			"\n"
+			"void main() {\n"
+			"	mat4 ortho = mat4(\n"
+			"		2.0/resolution.x,         0,          0,      0,\n"
+			"		0,        -2.0/resolution.y,          0,      0,\n"
+			"		0,                        0,         -1,      0,\n"
+			"		-1,                       1,          0,      1\n"
+			"	);\n"
+			"	gl_Position = ortho * (vec4(origin, 0, 0) + position);\n"
+			"	v_uv = uv;\n"
+			"}\n";
 	char* fragment_shader = "#version 110\n"
-				"precision mediump float;\n"
-				"\n"
-				"varying vec2 v_uv;\n"
-				"uniform sampler2D texture;\n"
-				"\n"
-				"void main() {\n"
-				"	vec4 color = texture2D(texture, v_uv);\n"
-				"	gl_FragColor = color;\n"
-				"}\n";
+			"precision mediump float;\n"
+			"\n"
+			"varying vec2 v_uv;\n"
+			"uniform sampler2D texture;\n"
+			"\n"
+			"void main() {\n"
+			"	vec4 color = texture2D(texture, v_uv);\n"
+			"	gl_FragColor = color;\n"
+			"}\n";
 
 	GLuint vertf = create_shader(vertex_shader, GL_VERTEX_SHADER);
 	GLuint fragf = create_shader(fragment_shader, GL_FRAGMENT_SHADER);
@@ -108,6 +110,21 @@ void context_open(wlc_handle output) {
 	GL_CALL(glLinkProgram(workspace->background_shader));
 	GL_CALL(glDeleteShader(vertf));
 	GL_CALL(glDeleteShader(fragf));
+
+	GLint status;
+	GL_CALL(glGetProgramiv(workspace->background_shader, GL_LINK_STATUS, &status));
+	if (!status) {
+		GLsizei len;
+		char log[1024];
+		GL_CALL(glGetProgramInfoLog(workspace->background_shader, sizeof(log),
+						&len, log));
+		char msg[2048];
+		sprintf(msg, "Linking:\n%*s\n", len, log);
+
+		logger_callback(WLC_LOG_ERROR, msg);
+
+		abort();
+	}
 
 	const char* source_background = get_background();
 	int32_t x, y, channels, reqchannels = 3;
@@ -149,8 +166,7 @@ void context_open(wlc_handle output) {
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, workspace->background_texture));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB,
-			GL_UNSIGNED_BYTE, data));
+	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
 
 	free(data);
 }
@@ -193,14 +209,14 @@ void rectangle_vertices(float* vertices, const float w, const float h) {
 	vertices[23] = 1;
 }
 
-void uv_vertices(float* uvs, const float uv1a, const float uv1b, const float uv2a, const float uv2b) {
+void uv_vertices(float* uvs, const float uv1a, const float uv1b,
+		const float uv2a, const float uv2b) {
 	uvs[0] = uv1a;
 	uvs[1] = uv1b;
 	uvs[2] = uv2a;
 	uvs[3] = uv1b;
 	uvs[4] = uv2a;
 	uvs[5] = uv2b;
-
 	uvs[6] = uv1a;
 	uvs[7] = uv1b;
 	uvs[8] = uv1a;
@@ -257,7 +273,7 @@ void custom_render(wlc_handle output) {
 
 	// background
 	if (workspace->background_texture != 0) {
-		render_rectangle(output, workspace->background_texture, workspace->background_shader,
-				0, 0, workspace->w, workspace->h);
+		render_rectangle(output, workspace->background_texture,
+				workspace->background_shader, 0, 0, workspace->w, workspace->h);
 	}
 }
