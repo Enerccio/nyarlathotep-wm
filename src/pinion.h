@@ -11,11 +11,52 @@
 
 #include <wlc/wlc.h>
 
+#define NO_RENDER_MASK (0)
+#define RENDER_MASK (1)
+
+typedef struct workspace workspace_t;
+
+// log.c
+void logger_callback(enum wlc_log_type type, const char *str);
+// log.c ends
+
+// keyboard_manager.c
+bool keyboard_callback(wlc_handle view, uint32_t time,
+		const struct wlc_modifiers*, uint32_t key, enum wlc_key_state);
+// keyboard_manager.c ends
+
+// configuration.c
+void init_configuration();
+
+const char* get_open_terminal_command();
+
+bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods);
+// configuration.c ends
+
 // workspace.c
 void init_workspaces();
 
 bool output_created(wlc_handle output);
 void output_terminated(wlc_handle output);
+void resolution_changed(wlc_handle output,
+		const struct wlc_size *from, const struct wlc_size *to);
+
+workspace_t* get_active_workspace();
+workspace_t* get_workspace_for_view(wlc_handle view);
+
+void workspace_set_view_hidden(workspace_t* workspace,
+		wlc_handle view);
+void workspace_set_main_window(workspace_t* workspace,
+		wlc_handle view);
+
+bool workspace_handle_key_input(workspace_t* workspace,
+		wlc_handle view, uint32_t time,
+		const struct wlc_modifiers* mods, uint32_t key,
+		enum wlc_key_state state);
 // workspace.c ends
+
+// windows.c
+bool view_created(wlc_handle view);
+// windows.c ends
 
 #endif /* PINION_H_ */

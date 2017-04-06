@@ -31,4 +31,6 @@ typedef struct workspace {
 workspace_t* create_workspace(wlc_handle handle);
 void terminate_workspace(workspace_t* workspace);
 
+void resize_workspace(workspace_t* workspace);
+
 #endif /* WORKSPACE_H_ */
