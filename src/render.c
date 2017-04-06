@@ -255,7 +255,7 @@ static void render_rectangle(wlc_handle output, GLuint texture, GLuint program,
 	GL_CALL(glUniform2f(uniformResolution, render_size->w, render_size->h));
 	GL_CALL(glUniform2f(uniformOrigin, x, y));
 
-	GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
+	GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 1));
 
 	GL_CALL(glEnableVertexAttribArray(0));
 	GL_CALL(glUseProgram(0));
