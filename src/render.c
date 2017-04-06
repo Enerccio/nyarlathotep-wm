@@ -2,7 +2,18 @@
 
 #include "stb/stb_image.h"
 #include "pinion.h"
+#include <wlc/wlc-wayland.h>
+#include <wlc/wlc-render.h>
 #include "workspace.h"
+
+
+float* vertices;
+float* uvs;
+
+void init_render() {
+	vertices = malloc(sizeof(float)*24);
+	uvs = malloc(sizeof(float)*12);
+}
 
 static const char*
 gl_error_string(const GLenum error) {
@@ -104,19 +115,19 @@ void context_open(wlc_handle output) {
 	GLuint vertf = create_shader(vertex_shader, GL_VERTEX_SHADER);
 	GLuint fragf = create_shader(fragment_shader, GL_FRAGMENT_SHADER);
 
-	workspace->background_shader = glCreateProgram();
-	GL_CALL(glAttachShader(workspace->background_shader, vertf));
-	GL_CALL(glAttachShader(workspace->background_shader, fragf));
-	GL_CALL(glLinkProgram(workspace->background_shader));
+	workspace->square_shader = glCreateProgram();
+	GL_CALL(glAttachShader(workspace->square_shader, vertf));
+	GL_CALL(glAttachShader(workspace->square_shader, fragf));
+	GL_CALL(glLinkProgram(workspace->square_shader));
 	GL_CALL(glDeleteShader(vertf));
 	GL_CALL(glDeleteShader(fragf));
 
 	GLint status;
-	GL_CALL(glGetProgramiv(workspace->background_shader, GL_LINK_STATUS, &status));
+	GL_CALL(glGetProgramiv(workspace->square_shader, GL_LINK_STATUS, &status));
 	if (!status) {
 		GLsizei len;
 		char log[1024];
-		GL_CALL(glGetProgramInfoLog(workspace->background_shader, sizeof(log),
+		GL_CALL(glGetProgramInfoLog(workspace->square_shader, sizeof(log),
 						&len, log));
 		char msg[2048];
 		sprintf(msg, "Linking:\n%*s\n", len, log);
@@ -127,6 +138,9 @@ void context_open(wlc_handle output) {
 	}
 
 	const char* source_background = get_background();
+	if (source_background == NULL || strcmp(source_background, "") == 0)
+		return;
+
 	int32_t x, y, channels, reqchannels = 3;
 	uint8_t* background = (uint8_t*) stbi_load(source_background, &x, &y,
 			&channels, reqchannels);
@@ -160,12 +174,11 @@ void context_open(wlc_handle output) {
 		data = background;
 	}
 
-	GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	GL_CALL(glGenTextures(1, &workspace->background_texture));
 
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, workspace->background_texture));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
 
 	free(data);
@@ -177,9 +190,9 @@ void context_closed(wlc_handle output) {
 		return;
 
 	GL_CALL(glDeleteTextures(1, &workspace->background_texture));
-	GL_CALL(glDeleteProgram(workspace->background_shader));
+	GL_CALL(glDeleteProgram(workspace->square_shader));
 
-	workspace->background_shader = workspace->background_texture = 0;
+	workspace->square_shader = workspace->background_texture = 0;
 }
 
 void rectangle_vertices(float* vertices, const float w, const float h) {
@@ -229,12 +242,9 @@ static void render_rectangle(wlc_handle output, GLuint texture, GLuint program,
 		uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
 	const struct wlc_size* render_size = wlc_output_get_resolution(output);
 
-	float vertices[24];
 	rectangle_vertices(vertices, w, h);
-	float uvs[12];
 	uv_vertices(uvs, 0, 0, 1, 1);
 
-	GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 	GL_CALL(glUseProgram(program));
 
 	GLuint attributePosition = GL_CALL(glGetAttribLocation(program, "position"));
@@ -244,9 +254,9 @@ static void render_rectangle(wlc_handle output, GLuint texture, GLuint program,
 	GLuint uniformTexture = GL_CALL(glGetUniformLocation(program, "texture"));
 
 	GL_CALL(glEnableVertexAttribArray(attributePosition));
-	GL_CALL(glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, vertices));
+	GL_CALL(glVertexAttribPointer(attributePosition, 4, GL_FLOAT, false, 0, vertices));
 	GL_CALL(glEnableVertexAttribArray(attributeUV));
-	GL_CALL(glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, uvs));
+	GL_CALL(glVertexAttribPointer(attributeUV, 2, GL_FLOAT, false, 0, uvs));
 
 	GL_CALL(glActiveTexture(GL_TEXTURE0));
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, texture));
@@ -255,9 +265,10 @@ static void render_rectangle(wlc_handle output, GLuint texture, GLuint program,
 	GL_CALL(glUniform2f(uniformResolution, render_size->w, render_size->h));
 	GL_CALL(glUniform2f(uniformOrigin, x, y));
 
-	GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 1));
+	GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
 
-	GL_CALL(glEnableVertexAttribArray(0));
+	GL_CALL(glDisableVertexAttribArray(attributePosition));
+	GL_CALL(glDisableVertexAttribArray(attributeUV));
 	GL_CALL(glUseProgram(0));
 }
 
@@ -268,12 +279,20 @@ void custom_render(wlc_handle output) {
 
 	GL_CALL(glEnable(GL_BLEND));
 	GL_CALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
-	GL_CALL(glClearColor(0.0f, 0.0f, 0.1f, 1.0f));
+	GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 	GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 
-	// background
 	if (workspace->background_texture != 0) {
 		render_rectangle(output, workspace->background_texture,
-				workspace->background_shader, 0, 0, workspace->w, workspace->h);
+				workspace->square_shader, 0, 0, workspace->w, workspace->h);
+	}
+
+	if (workspace->main_view != 0) {
+		uint32_t texture[3];
+		enum wlc_surface_format fmt;
+		wlc_surface_get_textures(wlc_view_get_surface(workspace->main_view), texture, &fmt);
+		const struct wlc_geometry* geo = wlc_view_get_geometry(workspace->main_view);
+		render_rectangle(output, texture[0], workspace->square_shader, geo->origin.x,
+				geo->origin.y, geo->size.w, geo->size.h);
 	}
 }

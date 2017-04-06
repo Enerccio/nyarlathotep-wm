@@ -67,6 +67,7 @@ bool view_created(wlc_handle view);
 // windows.c ends
 
 // render.c
+void init_render();
 void context_open(wlc_handle output);
 void context_closed(wlc_handle output);
 void custom_render(wlc_handle output);

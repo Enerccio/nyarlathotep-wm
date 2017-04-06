@@ -30,7 +30,7 @@ typedef struct workspace {
 	bool display_pinion_button; // TODO
 
 	GLuint background_texture;
-	GLuint background_shader;
+	GLuint square_shader;
 } workspace_t;
 
 workspace_t* create_workspace(wlc_handle handle);

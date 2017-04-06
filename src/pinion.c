@@ -15,6 +15,7 @@ int main(void) {
 
 	init_configuration();
 	init_workspaces();
+	init_render();
 
 	wlc_set_output_created_cb(output_created);
 	wlc_set_output_destroyed_cb(output_terminated);
