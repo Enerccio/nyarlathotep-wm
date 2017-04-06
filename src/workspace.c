@@ -18,6 +18,10 @@ void init_workspaces() {
  * Handles creation of workspace for each output.
  */
 bool output_created(wlc_handle output) {
+	if (table_contains(workspaces, (void*)output)) {
+		return true;
+	}
+
 	workspace_t* workspace = create_workspace(output);
 	if (workspace == NULL)
 		return false; // failed to allocate memory
@@ -43,6 +47,10 @@ void output_terminated(wlc_handle output) {
 void resolution_changed(wlc_handle output,
 		const struct wlc_size *from, const struct wlc_size *to) {
 	workspace_t* workspace = table_get(workspaces, (void*)output);
+	if (workspace == NULL) {
+		output_created(output);
+		workspace = table_get(workspaces, (void*)output);
+	}
 	if (workspace != NULL) {
 		workspace->w = to->w;
 		workspace->h = to->h;
@@ -80,6 +88,7 @@ workspace_t* create_workspace(wlc_handle output) {
  */
 void terminate_workspace(workspace_t* workspace) {
 	// TODO
+	free_list(workspace->hidden_windows);
 	free(workspace);
 }
 
@@ -90,6 +99,13 @@ workspace_t* get_active_workspace() {
 	wlc_handle output = wlc_get_focused_output();
 	if (output == 0)
 		return NULL;
+	return table_get(workspaces, (void*)output);
+}
+
+/**
+ * returns active workspace for output
+ */
+workspace_t* get_workspace_for_output(wlc_handle output) {
 	return table_get(workspaces, (void*)output);
 }
 
@@ -121,6 +137,7 @@ void workspace_set_view_hidden(workspace_t* workspace,
 	wlc_view_set_mask(view, NO_RENDER_MASK);
 	wlc_view_set_state(view, WLC_BIT_MAXIMIZED, false);
 	list_push_right(workspace->hidden_windows, (void*)view);
+	wlc_view_send_below(view, workspace->main_view);
 }
 
 void workspace_set_main_window(workspace_t* workspace,
@@ -133,9 +150,12 @@ void workspace_set_main_window(workspace_t* workspace,
 			// floating subwindow
 			// TODO handle this shit
 		} else {
+			wlc_handle topview = workspace->main_view;
+			workspace->main_view = view;
+
 			if (workspace->main_view != 0) {
 				// there is already a main view, move it to the background
-				workspace_set_view_hidden(workspace, workspace->main_view);
+				workspace_set_view_hidden(workspace, topview);
 			}
 
 			struct wlc_geometry geometry;
@@ -148,8 +168,6 @@ void workspace_set_main_window(workspace_t* workspace,
 			wlc_view_set_mask(view, RENDER_MASK);
 			wlc_view_set_state(view, WLC_BIT_MAXIMIZED, true);
 			wlc_view_focus(view);
-
-			workspace->main_view = view;
 		}
 	}
 }

@@ -25,10 +25,16 @@ bool keyboard_callback(wlc_handle view, uint32_t time,
 		const struct wlc_modifiers*, uint32_t key, enum wlc_key_state);
 // keyboard_manager.c ends
 
+// mouse_manager.c
+bool mouse_motion(wlc_handle view, uint32_t time,
+		const struct wlc_point* pointer);
+// mouse_manager.c ends
+
 // configuration.c
 void init_configuration();
 
 const char* get_open_terminal_command();
+const char* get_background();
 
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods);
 // configuration.c ends
@@ -42,6 +48,7 @@ void resolution_changed(wlc_handle output,
 		const struct wlc_size *from, const struct wlc_size *to);
 
 workspace_t* get_active_workspace();
+workspace_t* get_workspace_for_output(wlc_handle output);
 workspace_t* get_workspace_for_view(wlc_handle view);
 
 void workspace_set_view_hidden(workspace_t* workspace,
@@ -58,5 +65,11 @@ bool workspace_handle_key_input(workspace_t* workspace,
 // windows.c
 bool view_created(wlc_handle view);
 // windows.c ends
+
+// render.c
+void context_open(wlc_handle output);
+void context_closed(wlc_handle output);
+void custom_render(wlc_handle output);
+// render.c ends
 
 #endif /* PINION_H_ */

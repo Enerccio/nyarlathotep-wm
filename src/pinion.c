@@ -23,8 +23,13 @@ int main(void) {
 	wlc_set_view_created_cb(view_created);
 
 	wlc_set_keyboard_key_cb(keyboard_callback);
+	wlc_set_pointer_motion_cb(mouse_motion);
 
 	wlc_set_view_request_geometry_cb(request_geometry);
+
+	wlc_set_output_context_created_cb(context_open);
+	wlc_set_output_context_destroyed_cb(context_closed);
+	wlc_set_output_render_post_cb(custom_render);
 
 	if (!wlc_init())
 		return EXIT_FAILURE;

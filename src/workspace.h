@@ -4,7 +4,9 @@
 #ifndef WORKSPACE_H_
 #define WORKSPACE_H_
 
+#include <GLES2/gl2.h>
 #include <wlc/wlc.h>
+
 #include "libds/llist.h"
 
 /**
@@ -26,6 +28,9 @@ typedef struct workspace {
 	list_t* hidden_windows;
 
 	bool display_pinion_button; // TODO
+
+	GLuint background_texture;
+	GLuint background_shader;
 } workspace_t;
 
 workspace_t* create_workspace(wlc_handle handle);

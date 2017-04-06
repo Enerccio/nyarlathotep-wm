@@ -11,10 +11,16 @@ void init_configuration() {
 	current_configuration.open_terminal_key = XKB_KEY_t;
 
 	current_configuration.default_terminal = "weston-terminal";
+	// TODO
+	current_configuration.background = "/home/enerccio/background.jpg";
 }
 
 const char* get_open_terminal_command() {
 	return current_configuration.default_terminal;
+}
+
+const char* get_background() {
+	return current_configuration.background;
 }
 
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods) {

@@ -8,6 +8,7 @@ typedef struct configuration {
 	uint32_t open_terminal_key;
 
 	const char* default_terminal;
+	const char* background;
 } configuration_t;
 
 #endif /* CONFIGURATION_H_ */
