@@ -9,6 +9,8 @@ typedef struct configuration {
 
 	const char* default_terminal;
 	const char* background;
+
+	float window_list_color[4];
 } configuration_t;
 
 #endif /* CONFIGURATION_H_ */

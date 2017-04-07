@@ -27,6 +27,7 @@ typedef struct workspace {
 
 	list_t* hidden_windows;
 	GLuint square_shader;
+	GLuint square_color_shader;
 
 	bool window_list_opening;
 	bool window_list_force_hide;
