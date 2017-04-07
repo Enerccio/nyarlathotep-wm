@@ -139,6 +139,9 @@ void workspace_set_view_hidden(workspace_t* workspace,
 	wlc_view_set_state(view, WLC_BIT_MAXIMIZED, false);
 	list_push_right(workspace->hidden_windows, (void*)view);
 	wlc_view_send_below(view, workspace->main_view);
+
+	if (workspace->window_list_show_width > 0)
+		wlc_output_schedule_render(workspace->output); // to redraw sidebar
 }
 
 void workspace_set_main_window(workspace_t* workspace,
@@ -154,7 +157,7 @@ void workspace_set_main_window(workspace_t* workspace,
 			wlc_handle topview = workspace->main_view;
 			workspace->main_view = view;
 
-			if (workspace->main_view != 0) {
+			if (topview != 0) {
 				// there is already a main view, move it to the background
 				workspace_set_view_hidden(workspace, topview);
 			}
@@ -192,9 +195,7 @@ void resize_workspace(workspace_t* workspace) {
 bool open_window_list_animator(void* data) {
 	workspace_t* workspace = (workspace_t*)data;
 	if (workspace->window_list_force_hide) {
-		workspace->window_list_show_width = 0;
-		workspace->window_list_force_hide = false;
-		workspace->window_list_opening = false;
+		close_window_list(workspace);
 		return true;
 	}
 
@@ -227,6 +228,13 @@ void open_window_list(workspace_t* workspace) {
 	register_animation(open_window_list_animator, workspace, 12);
 }
 
+void close_window_list(workspace_t* workspace) {
+	workspace->window_list_show_width = 0;
+	workspace->window_list_force_hide = false;
+	workspace->window_list_opening = false;
+	workspace->window_list_scroll_offset = 0;
+}
+
 /**
  * Handles all key inputs related to workspace
  */
@@ -253,9 +261,26 @@ bool workspace_handle_key_input(workspace_t* workspace,
 
 bool workspace_handle_mouse_motion(workspace_t* workspace, wlc_handle view, uint32_t time,
 		const struct wlc_point* pointer) {
+	workspace->px = pointer->x;
+	workspace->py = pointer->y;
+
 	if (pointer->x >= workspace->w-1) {
 		open_window_list(workspace);
 		return false;
 	}
+	return false;
+}
+
+bool workspace_handle_scroll(workspace_t* workspace, wlc_handle view, uint32_t time,
+		const struct wlc_modifiers* mods,
+		uint8_t axis_bits, double amount[2]) {
+
+	if (workspace->px >= (workspace->w - workspace->window_list_show_width)) {
+		if (axis_bits & WLC_SCROLL_AXIS_VERTICAL) {
+			workspace->window_list_scroll_offset += amount[0];
+			wlc_output_schedule_render(workspace->output);
+		}
+	}
+
 	return false;
 }

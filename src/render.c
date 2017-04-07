@@ -222,7 +222,7 @@ void uv_vertices(float* uvs, const float uv1a, const float uv1b,
 }
 
 static void render_rectangle(wlc_handle output, GLuint texture, GLuint program,
-		uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+		int32_t x, int32_t y, uint32_t w, uint32_t h) {
 	const struct wlc_size* render_size = wlc_output_get_resolution(output);
 
 	rectangle_vertices(vertices, w, h);
@@ -258,17 +258,15 @@ static void render_rectangle(wlc_handle output, GLuint texture, GLuint program,
 }
 
 static void render_rectangle_color(wlc_handle output, GLuint program,
-		uint32_t x, uint32_t y, uint32_t w, uint32_t h,
+		int32_t x, int32_t y, uint32_t w, uint32_t h,
 		float r, float g, float b, float a) {
 	const struct wlc_size* render_size = wlc_output_get_resolution(output);
 
 	rectangle_vertices(vertices, w, h);
-	uv_vertices(uvs, 0, 0, 1, 1);
 
 	GL_CALL(glUseProgram(program));
 
 	GLuint attributePosition = GL_CALL(glGetAttribLocation(program, "position"));
-	GLuint attributeUV = GL_CALL(glGetAttribLocation(program, "uv"));
 	GLuint uniformResolution = GL_CALL(glGetUniformLocation(program, "resolution"));
 	GLuint uniformOrigin = GL_CALL(glGetUniformLocation(program, "origin"));
 	GLuint uniformColor = GL_CALL(glGetUniformLocation(program, "color"));
@@ -277,8 +275,6 @@ static void render_rectangle_color(wlc_handle output, GLuint program,
 
 	GL_CALL(glEnableVertexAttribArray(attributePosition));
 	GL_CALL(glVertexAttribPointer(attributePosition, 4, GL_FLOAT, false, 0, vertices));
-	GL_CALL(glEnableVertexAttribArray(attributeUV));
-	GL_CALL(glVertexAttribPointer(attributeUV, 2, GL_FLOAT, false, 0, uvs));
 
 
 	GL_CALL(glUniform2f(uniformResolution, render_size->w, render_size->h));
@@ -287,7 +283,6 @@ static void render_rectangle_color(wlc_handle output, GLuint program,
 	GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
 
 	GL_CALL(glDisableVertexAttribArray(attributePosition));
-	GL_CALL(glDisableVertexAttribArray(attributeUV));
 	GL_CALL(glUseProgram(0));
 }
 
@@ -322,5 +317,37 @@ void custom_render(wlc_handle output) {
 				workspace->window_list_show_width, workspace->h,
 				window_list_color[0], window_list_color[1],
 				window_list_color[2], window_list_color[3]);
+
+		int win_width = workspace->window_list_total_width * 0.8f;
+		int total_win_size = get_side_window_height() + get_size_window_offset();
+		int num_hidden_windows = list_size(workspace->hidden_windows);
+		int max_scroll = (num_hidden_windows * total_win_size) - workspace->h;
+
+		workspace->window_list_scroll_offset = workspace->window_list_scroll_offset < 0 ?
+				0 : workspace->window_list_scroll_offset;
+		workspace->window_list_scroll_offset = workspace->window_list_scroll_offset >= max_scroll ?
+				max_scroll : workspace->window_list_scroll_offset;
+
+		list_iterator_t li;
+		list_create_iterator(workspace->hidden_windows, &li);
+
+		int h = 0;
+
+		while (list_has_next(&li)) {
+			int wlx = (workspace->w - workspace->window_list_show_width)
+					+ ((workspace->window_list_total_width - win_width)/2);
+			int wly = h + ((get_size_window_offset() - get_side_window_height()) / 2)
+					- workspace->window_list_scroll_offset;
+
+
+			wlc_handle view = (wlc_handle)list_next(&li);
+			uint32_t texture[3];
+			enum wlc_surface_format fmt;
+			wlc_surface_get_textures(wlc_view_get_surface(view), texture, &fmt);
+			render_rectangle(output, texture[0], workspace->square_shader, wlx,
+							wly, win_width, get_side_window_height());
+
+			h += get_size_window_offset();
+		}
 	}
 }

@@ -23,6 +23,8 @@ void logger_callback(enum wlc_log_type type, const char *str);
 // keyboard_manager.c
 bool keyboard_callback(wlc_handle view, uint32_t time,
 		const struct wlc_modifiers*, uint32_t key, enum wlc_key_state);
+bool keyboard_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers*,
+		uint8_t axis_bits, double amount[2]);
 // keyboard_manager.c ends
 
 // mouse_manager.c
@@ -36,6 +38,8 @@ void init_configuration();
 const char* get_open_terminal_command();
 const char* get_background();
 const float* get_window_list_color();
+int get_side_window_height();
+int get_size_window_offset();
 
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods);
 // configuration.c ends
@@ -69,6 +73,9 @@ bool workspace_handle_key_input(workspace_t* workspace,
 bool workspace_handle_mouse_motion(workspace_t* workspace, wlc_handle view,
 		uint32_t time,
 		const struct wlc_point* pointer);
+bool workspace_handle_scroll(workspace_t* workspace, wlc_handle view, uint32_t time,
+		const struct wlc_modifiers*,
+		uint8_t axis_bits, double amount[2]);
 // workspace.c ends
 
 // windows.c

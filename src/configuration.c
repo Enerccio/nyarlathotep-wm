@@ -18,6 +18,9 @@ void init_configuration() {
 	current_configuration.window_list_color[1] = 0.0;
 	current_configuration.window_list_color[2] = 0.0;
 	current_configuration.window_list_color[3] = 1.0;
+
+	current_configuration.window_list_sizes[0] = 100;
+	current_configuration.window_list_sizes[1] = 130;
 }
 
 const char* get_open_terminal_command() {
@@ -35,4 +38,12 @@ const float* get_window_list_color() {
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods) {
 	return key == current_configuration.open_terminal_key &&
 			mods.mods == current_configuration.control_key_modifiers;
+}
+
+int get_side_window_height() {
+	return current_configuration.window_list_sizes[0];
+}
+
+int get_size_window_offset() {
+	return current_configuration.window_list_sizes[1];
 }
