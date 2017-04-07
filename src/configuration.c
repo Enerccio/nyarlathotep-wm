@@ -13,6 +13,11 @@ void init_configuration() {
 	current_configuration.default_terminal = "weston-terminal";
 	// TODO
 	current_configuration.background = "/home/enerccio/background.jpg";
+
+	current_configuration.window_list_color[0] = 1.0;
+	current_configuration.window_list_color[1] = 0.0;
+	current_configuration.window_list_color[2] = 0.0;
+	current_configuration.window_list_color[3] = 1.0;
 }
 
 const char* get_open_terminal_command() {
@@ -21,6 +26,10 @@ const char* get_open_terminal_command() {
 
 const char* get_background() {
 	return current_configuration.background;
+}
+
+const float* get_window_list_color() {
+	return current_configuration.window_list_color;
 }
 
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods) {

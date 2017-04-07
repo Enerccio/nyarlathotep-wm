@@ -7,7 +7,7 @@ typedef struct animator_data {
 	uint32_t delay;
 } animator_data_t;
 
-int on_event_data(void* passdata) {
+int on_animation(void* passdata) {
 	animator_data_t* animator_data = (animator_data_t*)passdata;
 	bool stop = animator_data->callback(animator_data->data);
 	if (stop) {
@@ -24,7 +24,7 @@ int on_event_data(void* passdata) {
 
 void register_animation(animation_request request, void* data, int delay) {
 	animator_data_t* passarg = malloc(sizeof(animator_data_t));
-	struct wlc_event_source* event_source = wlc_event_loop_add_timer(on_event_data, passarg);
+	struct wlc_event_source* event_source = wlc_event_loop_add_timer(on_animation, passarg);
 	passarg->callback = request;
 	passarg->event_source = event_source;
 	passarg->data = data;

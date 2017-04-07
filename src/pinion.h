@@ -35,6 +35,7 @@ void init_configuration();
 
 const char* get_open_terminal_command();
 const char* get_background();
+const float* get_window_list_color();
 
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods);
 // configuration.c ends
