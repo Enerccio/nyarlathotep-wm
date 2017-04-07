@@ -1,5 +1,6 @@
 #include "libds/hmap.h"
 #include "pinion.h"
+#include <wlc/wlc-render.h>
 #include "workspace.h"
 
 /* Holds output->workspace hash map */
@@ -173,7 +174,57 @@ void workspace_set_main_window(workspace_t* workspace,
 }
 
 void resize_workspace(workspace_t* workspace) {
-	// TODO
+
+	struct wlc_geometry geometry;
+	geometry.origin.x = 0;
+	geometry.origin.y = 0;
+	geometry.size.w = workspace->w;
+	geometry.size.h = workspace->h;
+
+	if (workspace->main_view != 0) {
+		wlc_view_set_geometry(workspace->main_view, 0, &geometry);
+	}
+
+	workspace->window_list_show_width = 0;
+	workspace->window_list_total_width = workspace->w * 0.15;
+}
+
+bool open_window_list_animator(void* data) {
+	workspace_t* workspace = (workspace_t*)data;
+	if (workspace->window_list_force_hide) {
+		workspace->window_list_show_width = 0;
+		workspace->window_list_force_hide = false;
+		workspace->window_list_opening = false;
+		return true;
+	}
+
+	int byfar = workspace->window_list_total_width / (500/12);
+	if (byfar <= 0)
+		byfar = 1; // minimum increase
+	if (workspace->window_list_show_width + byfar > workspace->window_list_total_width) {
+		workspace->window_list_show_width = workspace->window_list_total_width;
+	} else {
+		workspace->window_list_show_width += byfar;
+	}
+
+	wlc_output_schedule_render(workspace->output);
+
+	if (workspace->window_list_show_width == workspace->window_list_total_width) {
+		workspace->window_list_opening = false;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void open_window_list(workspace_t* workspace) {
+	if (workspace->window_list_opening)
+		return;
+
+	wlc_view_focus(0); // remove focus
+	workspace->window_list_opening = true;
+	workspace->window_list_force_hide = false;
+	register_animation(open_window_list_animator, workspace, 12);
 }
 
 /**
@@ -197,5 +248,14 @@ bool workspace_handle_key_input(workspace_t* workspace,
 		return true;
 	}
 
+	return false;
+}
+
+bool workspace_handle_mouse_motion(workspace_t* workspace, wlc_handle view, uint32_t time,
+		const struct wlc_point* pointer) {
+	if (pointer->x >= workspace->w-1) {
+		open_window_list(workspace);
+		return false;
+	}
 	return false;
 }

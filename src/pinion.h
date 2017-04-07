@@ -39,6 +39,11 @@ const char* get_background();
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods);
 // configuration.c ends
 
+// animator.c
+typedef bool(*animation_request)(void* data);
+void register_animation(animation_request request, void* data, int delay);
+// animator.c ends
+
 // workspace.c
 void init_workspaces();
 
@@ -60,6 +65,9 @@ bool workspace_handle_key_input(workspace_t* workspace,
 		wlc_handle view, uint32_t time,
 		const struct wlc_modifiers* mods, uint32_t key,
 		enum wlc_key_state state);
+bool workspace_handle_mouse_motion(workspace_t* workspace, wlc_handle view,
+		uint32_t time,
+		const struct wlc_point* pointer);
 // workspace.c ends
 
 // windows.c

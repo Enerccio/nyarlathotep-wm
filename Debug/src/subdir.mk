@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../src/animator.c \
 ../src/configuration.c \
 ../src/keyboard_manager.c \
 ../src/log.c \
@@ -14,6 +15,7 @@ C_SRCS += \
 ../src/workspace.c 
 
 OBJS += \
+./src/animator.o \
 ./src/configuration.o \
 ./src/keyboard_manager.o \
 ./src/log.o \
@@ -24,6 +26,7 @@ OBJS += \
 ./src/workspace.o 
 
 C_DEPS += \
+./src/animator.d \
 ./src/configuration.d \
 ./src/keyboard_manager.d \
 ./src/log.d \

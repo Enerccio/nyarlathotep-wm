@@ -26,16 +26,21 @@ typedef struct workspace {
 	wlc_handle main_view;
 
 	list_t* hidden_windows;
+	GLuint square_shader;
 
-	bool display_pinion_button; // TODO
+	bool window_list_opening;
+	bool window_list_force_hide;
+	int window_list_total_width;
+	int window_list_show_width;
 
 	GLuint background_texture;
-	GLuint square_shader;
+
+	bool display_pinion_button; // TODO
 } workspace_t;
 
 workspace_t* create_workspace(wlc_handle handle);
 void terminate_workspace(workspace_t* workspace);
-
 void resize_workspace(workspace_t* workspace);
+void open_window_list(workspace_t* workspace);
 
 #endif /* WORKSPACE_H_ */
