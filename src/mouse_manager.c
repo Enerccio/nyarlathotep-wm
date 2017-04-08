@@ -13,7 +13,7 @@ bool mouse_motion(wlc_handle view, uint32_t time,
 	return false;
 }
 
-bool keyboard_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers* mods,
+bool mouse_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers* mods,
 		uint8_t axis_bits, double amount[2]) {
 
 	workspace_t* active_workspace = get_active_workspace();

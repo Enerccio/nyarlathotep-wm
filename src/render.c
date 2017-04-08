@@ -323,6 +323,8 @@ void custom_render(wlc_handle output) {
 		int num_hidden_windows = list_size(workspace->hidden_windows);
 		int max_scroll = (num_hidden_windows * total_win_size) - workspace->h;
 
+		max_scroll = max_scroll <= 0 ? 0 : max_scroll;
+
 		workspace->window_list_scroll_offset = workspace->window_list_scroll_offset < 0 ?
 				0 : workspace->window_list_scroll_offset;
 		workspace->window_list_scroll_offset = workspace->window_list_scroll_offset >= max_scroll ?

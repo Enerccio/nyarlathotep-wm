@@ -23,7 +23,7 @@ void logger_callback(enum wlc_log_type type, const char *str);
 // keyboard_manager.c
 bool keyboard_callback(wlc_handle view, uint32_t time,
 		const struct wlc_modifiers*, uint32_t key, enum wlc_key_state);
-bool keyboard_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers*,
+bool mouse_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers*,
 		uint8_t axis_bits, double amount[2]);
 // keyboard_manager.c ends
 
