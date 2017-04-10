@@ -19,6 +19,11 @@ void init_configuration() {
 	current_configuration.window_list_color[2] = 0.0;
 	current_configuration.window_list_color[3] = 1.0;
 
+	current_configuration.window_list_selection_color[0] = 0.0;
+	current_configuration.window_list_selection_color[1] = 1.0;
+	current_configuration.window_list_selection_color[2] = 0.0;
+	current_configuration.window_list_selection_color[3] = 1.0;
+
 	current_configuration.window_list_sizes[0] = 100;
 	current_configuration.window_list_sizes[1] = 130;
 }
@@ -33,6 +38,10 @@ const char* get_background() {
 
 const float* get_window_list_color() {
 	return current_configuration.window_list_color;
+}
+
+const float* get_window_list_selection_color() {
+	return current_configuration.window_list_selection_color;
 }
 
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods) {

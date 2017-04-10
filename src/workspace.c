@@ -225,6 +225,10 @@ void open_window_list(workspace_t* workspace) {
 	wlc_view_focus(0); // remove focus
 	workspace->window_list_opening = true;
 	workspace->window_list_force_hide = false;
+	if (list_size(workspace->hidden_windows) > 0) {
+		workspace->window_list_selected_view = (wlc_handle)list_get_left(workspace->hidden_windows);
+	}
+
 	register_animation(open_window_list_animator, workspace, 12);
 }
 
@@ -233,6 +237,19 @@ void close_window_list(workspace_t* workspace) {
 	workspace->window_list_force_hide = false;
 	workspace->window_list_opening = false;
 	workspace->window_list_scroll_offset = 0;
+	workspace->window_list_selected_view = 0;
+}
+
+void workspace_view_got_focus(workspace_t* workspace,
+		wlc_handle view) {
+	if (workspace->main_view == view) {
+		close_window_list(workspace);
+		wlc_view_focus(view);
+	} else {
+		// TODO: pinned windows
+
+		// ignore, other windows can get focus
+	}
 }
 
 /**

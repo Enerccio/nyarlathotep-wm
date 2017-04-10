@@ -11,6 +11,7 @@ typedef struct configuration {
 	const char* background;
 
 	float window_list_color[4];
+	float window_list_selection_color[4];
 	int window_list_sizes[2];
 } configuration_t;
 

@@ -35,6 +35,7 @@ typedef struct workspace {
 	int window_list_total_width;
 	int window_list_show_width;
 	int window_list_scroll_offset;
+	wlc_handle window_list_selected_view;
 
 	GLuint background_texture;
 

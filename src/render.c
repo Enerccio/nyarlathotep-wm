@@ -312,6 +312,8 @@ void custom_render(wlc_handle output) {
 
 	if (workspace->window_list_show_width > 0) {
 		const float* window_list_color = get_window_list_color();
+		const float* window_list_sel_color = get_window_list_selection_color();
+
 		render_rectangle_color(output, workspace->square_color_shader,
 				workspace->w - workspace->window_list_show_width, 0,
 				workspace->window_list_show_width, workspace->h,
@@ -341,11 +343,19 @@ void custom_render(wlc_handle output) {
 			int wly = h + ((get_size_window_offset() - get_side_window_height()) / 2)
 					- workspace->window_list_scroll_offset;
 
-
 			wlc_handle view = (wlc_handle)list_next(&li);
 			uint32_t texture[3];
 			enum wlc_surface_format fmt;
 			wlc_surface_get_textures(wlc_view_get_surface(view), texture, &fmt);
+
+			if (view == workspace->window_list_selected_view) {
+				render_rectangle_color(output, workspace->square_color_shader,
+								wlx - RENDER_SELECTED_WINDOW_LIST_OFFSET, wly - RENDER_SELECTED_WINDOW_LIST_OFFSET,
+								win_width + (2*RENDER_SELECTED_WINDOW_LIST_OFFSET), get_side_window_height() + (2*RENDER_SELECTED_WINDOW_LIST_OFFSET),
+								window_list_sel_color[0], window_list_sel_color[1],
+								window_list_sel_color[2], window_list_sel_color[3]);
+			}
+
 			render_rectangle(output, texture[0], workspace->square_shader, wlx,
 							wly, win_width, get_side_window_height());
 

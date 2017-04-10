@@ -14,6 +14,8 @@
 #define NO_RENDER_MASK (0)
 #define RENDER_MASK (1)
 
+#define RENDER_SELECTED_WINDOW_LIST_OFFSET (5)
+
 typedef struct workspace workspace_t;
 
 // log.c
@@ -38,6 +40,7 @@ void init_configuration();
 const char* get_open_terminal_command();
 const char* get_background();
 const float* get_window_list_color();
+const float* get_window_list_selection_color();
 int get_side_window_height();
 int get_size_window_offset();
 
@@ -66,6 +69,9 @@ void workspace_set_view_hidden(workspace_t* workspace,
 void workspace_set_main_window(workspace_t* workspace,
 		wlc_handle view);
 
+void workspace_view_got_focus(workspace_t* workspace,
+		wlc_handle view);
+
 bool workspace_handle_key_input(workspace_t* workspace,
 		wlc_handle view, uint32_t time,
 		const struct wlc_modifiers* mods, uint32_t key,
@@ -80,6 +86,7 @@ bool workspace_handle_scroll(workspace_t* workspace, wlc_handle view, uint32_t t
 
 // windows.c
 bool view_created(wlc_handle view);
+void view_focus_change(wlc_handle view, bool focus);
 // windows.c ends
 
 // render.c
