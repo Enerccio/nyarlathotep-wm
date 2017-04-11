@@ -113,6 +113,29 @@ static void compile_shaders(workspace_t* workspace) {
 	workspace->square_color_shader = compile_shader(__vertex_shader_square, __fragment_shader_square_color);
 }
 
+static void surface_paint(struct ctx *context, struct wlc_surface *surface,
+		const struct wlc_geometry *geometry) {
+	// we paint on post render, no need to call this and do work twice
+}
+
+static void view_paint(struct ctx *context, struct wlc_view *view) {
+
+}
+
+static void pointer_paint(struct ctx *context, const struct wlc_point *pos) {
+	// we paint on post render, no need to call this and do work twice
+}
+
+void* pinion_renderer(struct wlc_render_api *api) {
+	void* renderer = wlc_gles2(api);
+
+	api->surface_paint = surface_paint;
+	api->view_paint = view_paint;
+	api->pointer_paint = pointer_paint;
+
+	return renderer;
+}
+
 void context_open(wlc_handle output) {
 	workspace_t* workspace = get_workspace_for_output(output);
 	if (workspace == NULL)

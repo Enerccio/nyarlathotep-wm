@@ -31,7 +31,7 @@ all: pinion
 pinion: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o "pinion" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L/usr2/fast/projects/pinion/wlc/target/src -o "pinion" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

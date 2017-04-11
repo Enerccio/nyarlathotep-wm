@@ -9,6 +9,10 @@ void request_geometry(wlc_handle view, const struct wlc_geometry* geometry) {
 	}
 }
 
+void output_renderer(wlc_handle output) {
+	wlc_output_set_renderer(output, pinion_renderer);
+}
+
 int main(void) {
 
 	wlc_log_set_handler(logger_callback);
@@ -17,6 +21,7 @@ int main(void) {
 	init_workspaces();
 	init_render();
 
+	wlc_set_output_pre_backend_attach_cb(output_renderer);
 	wlc_set_output_created_cb(output_created);
 	wlc_set_output_destroyed_cb(output_terminated);
 	wlc_set_output_resolution_cb(resolution_changed);

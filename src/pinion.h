@@ -10,6 +10,7 @@
 #include <stdlib.h>
 
 #include <wlc/wlc.h>
+#include <wlc/wlc-renderer.h>
 
 #define NO_RENDER_MASK (0)
 #define RENDER_MASK (1)
@@ -91,6 +92,7 @@ void view_focus_change(wlc_handle view, bool focus);
 
 // render.c
 void init_render();
+void* pinion_renderer(struct wlc_render_api *api);
 void context_open(wlc_handle output);
 void context_closed(wlc_handle output);
 void custom_render(wlc_handle output);
