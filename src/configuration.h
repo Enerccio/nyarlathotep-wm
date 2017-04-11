@@ -7,6 +7,10 @@ typedef struct configuration {
 	uint32_t control_key_modifiers;
 	uint32_t open_terminal_key;
 
+	const char* shell;
+	const char* workdir;
+	const char* execution_script;
+
 	const char* default_terminal;
 	const char* background;
 
@@ -14,5 +18,7 @@ typedef struct configuration {
 	float window_list_selection_color[4];
 	int window_list_sizes[2];
 } configuration_t;
+
+extern configuration_t current_configuration;
 
 #endif /* CONFIGURATION_H_ */

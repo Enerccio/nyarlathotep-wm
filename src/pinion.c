@@ -1,4 +1,6 @@
 #include "pinion.h"
+#include "configuration.h"
+#include "platform/platform.h"
 
 void request_geometry(wlc_handle view, const struct wlc_geometry* geometry) {
 	wlc_handle parent = wlc_view_get_parent(view);
@@ -9,6 +11,19 @@ void request_geometry(wlc_handle view, const struct wlc_geometry* geometry) {
 	}
 }
 
+void compositor_ready() {
+	char* wd = get_pinion_workdir();
+	if (current_configuration.execution_script != NULL &&
+			strcmp(current_configuration.execution_script, "") != 0) {
+		char* rc = path_concat(wd, current_configuration.execution_script);
+		const char* args[2];
+		args[0] = get_default_shell();
+		args[1] = rc;
+		wlc_exec(args[0], (char* const*)args);
+		free(rc);
+	}
+}
+
 int main(void) {
 
 	wlc_log_set_handler(logger_callback);
@@ -16,6 +31,8 @@ int main(void) {
 	init_configuration();
 	init_workspaces();
 	init_render();
+
+	wlc_set_compositor_ready_cb(compositor_ready);
 
 	wlc_set_output_created_cb(output_created);
 	wlc_set_output_destroyed_cb(output_terminated);

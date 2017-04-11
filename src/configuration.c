@@ -14,6 +14,10 @@ void init_configuration() {
 	// TODO
 	current_configuration.background = "/home/enerccio/background.jpg";
 
+	current_configuration.shell = NULL;
+	current_configuration.workdir = ".tackle";
+	current_configuration.execution_script = "pinioninit.rc";
+
 	current_configuration.window_list_color[0] = 1.0;
 	current_configuration.window_list_color[1] = 0.0;
 	current_configuration.window_list_color[2] = 0.0;

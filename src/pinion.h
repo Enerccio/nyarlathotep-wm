@@ -11,10 +11,7 @@
 
 #include <wlc/wlc.h>
 
-#define NO_RENDER_MASK (0)
-#define RENDER_MASK (1)
-
-#define RENDER_SELECTED_WINDOW_LIST_OFFSET (5)
+#include "macros.h"
 
 typedef struct workspace workspace_t;
 

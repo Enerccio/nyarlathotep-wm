@@ -66,18 +66,13 @@ void resolution_changed(wlc_handle output,
  */
 workspace_t* create_workspace(wlc_handle output) {
 	workspace_t* workspace = malloc(sizeof(workspace_t));
-	if (workspace == NULL)
-		return NULL;
-
+	ASSERT_MEM(workspace);
 	memset(workspace, 0, sizeof(workspace_t));
 
 	workspace->output = output;
 	workspace->hidden_windows = create_list();
 
-	if (workspace->hidden_windows == NULL) {
-		free(workspace);
-		return NULL;
-	}
+	ASSERT_MEM(workspace->hidden_windows);
 
 	return workspace;
 }
