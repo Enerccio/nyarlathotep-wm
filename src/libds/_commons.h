@@ -35,12 +35,12 @@
 extern "C" {
 #endif
 
-extern void* malloc(size_t n);
-extern void* calloc(size_t num, size_t n);
-extern void* realloc(void* a, size_t n);
-extern void  free(void* a);
-extern int   strcmp(const char* a, const char* b);
-extern void* memset(void* c, int v, size_t s);
+extern void* (malloc)(size_t n);
+extern void* (calloc)(size_t num, size_t n);
+extern void* (realloc)(void* a, size_t n);
+extern void  (free)(void* a);
+extern int   (strcmp)(const char* a, const char* b);
+extern void* (memset)(void* c, int v, size_t s);
 
 #ifndef REGISTER_UINT_TYPE
 #define REGISTER_UINT_TYPE uint64_t

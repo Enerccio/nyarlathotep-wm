@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lwlc -lGLESv2 -lm
+LIBS := -lwlc -lconfig -lGLESv2 -lm
 

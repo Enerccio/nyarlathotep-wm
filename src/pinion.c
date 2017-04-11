@@ -11,6 +11,17 @@ void request_geometry(wlc_handle view, const struct wlc_geometry* geometry) {
 	}
 }
 
+void load_config() {
+	// TODO: arguments
+	config_t config;
+	config_init(&config);
+
+	config_read_file(&config, current_configuration.config_file_loc);
+	load_configuration_from_cfg(&config);
+
+	config_destroy(&config);
+}
+
 void compositor_ready() {
 	char* wd = get_pinion_workdir();
 	if (current_configuration.execution_script != NULL &&
@@ -20,15 +31,16 @@ void compositor_ready() {
 		args[0] = get_default_shell();
 		args[1] = rc;
 		wlc_exec(args[0], (char* const*)args);
-		free(rc);
 	}
 }
 
-int main(void) {
+int main(int argc, char** argv) {
+	// TODO: arguments
 
 	wlc_log_set_handler(logger_callback);
 
 	init_configuration();
+	load_config();
 	init_workspaces();
 	init_render();
 

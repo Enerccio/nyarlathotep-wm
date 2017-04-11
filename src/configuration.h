@@ -2,8 +2,11 @@
 #define CONFIGURATION_H_
 
 #include <xkbcommon/xkbcommon-keysyms.h>
+#include <libconfig.h>
 
 typedef struct configuration {
+	const char* config_file_loc;
+
 	uint32_t control_key_modifiers;
 	uint32_t open_terminal_key;
 
@@ -20,5 +23,7 @@ typedef struct configuration {
 } configuration_t;
 
 extern configuration_t current_configuration;
+
+void load_configuration_from_cfg(config_t* config);
 
 #endif /* CONFIGURATION_H_ */
