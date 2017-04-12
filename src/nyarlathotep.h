@@ -3,8 +3,8 @@
  *
  * All subsystems must import this header.
  */
-#ifndef PINION_H_
-#define PINION_H_
+#ifndef NYARLATHOTEP_H_
+#define NYARLATHOTEP_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -93,4 +93,4 @@ void context_closed(wlc_handle output);
 void custom_render(wlc_handle output);
 // render.c ends
 
-#endif /* PINION_H_ */
+#endif /* NYARLATHOTEP_H_ */

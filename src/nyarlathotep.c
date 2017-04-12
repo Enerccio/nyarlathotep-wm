@@ -1,4 +1,5 @@
-#include "pinion.h"
+#include "nyarlathotep.h"
+
 #include "configuration.h"
 #include "platform/platform.h"
 

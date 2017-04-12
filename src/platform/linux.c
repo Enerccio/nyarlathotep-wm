@@ -1,5 +1,5 @@
-#include "../pinion.h"
 #include "../configuration.h"
+#include "../nyarlathotep.h"
 #include "platform.h"
 
 #ifdef linux

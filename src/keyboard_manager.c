@@ -1,4 +1,4 @@
-#include "pinion.h"
+#include "nyarlathotep.h"
 
 bool keyboard_callback(wlc_handle view, uint32_t time,
 		const struct wlc_modifiers* mods, uint32_t key,

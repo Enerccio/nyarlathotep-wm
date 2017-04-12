@@ -1,4 +1,4 @@
-#include "pinion.h"
+#include "nyarlathotep.h"
 
 bool view_created(wlc_handle view) {
 	workspace_t* workspace = get_workspace_for_view(view);

@@ -1,6 +1,7 @@
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
 
+#include <stdint.h>
 #include <xkbcommon/xkbcommon-keysyms.h>
 #include <libconfig.h>
 

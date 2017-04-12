@@ -1,4 +1,4 @@
-#include "pinion.h"
+#include "nyarlathotep.h"
 
 typedef struct animator_data {
 	animation_request callback;

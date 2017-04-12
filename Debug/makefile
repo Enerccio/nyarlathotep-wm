@@ -26,19 +26,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: pinion
+all: nwm
 
 # Tool invocations
-pinion: $(OBJS) $(USER_OBJS)
+nwm: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o "pinion" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "nwm" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) pinion
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) nwm
 	-@echo ' '
 
 .PHONY: all clean dependents

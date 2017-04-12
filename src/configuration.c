@@ -1,12 +1,12 @@
-#include "pinion.h"
 #include "configuration.h"
+#include "nyarlathotep.h"
 
 configuration_t current_configuration;
 
 void init_configuration() {
 	memset(&current_configuration, 0, sizeof(configuration_t));
 
-	current_configuration.config_file_loc = "/home/enerccio/.tackle/pinion.conf";
+	current_configuration.config_file_loc = "/home/enerccio/.nyarla/thotep.conf";
 
 	current_configuration.control_key_modifiers =
 			WLC_BIT_MOD_CTRL | WLC_BIT_MOD_ALT;
@@ -17,8 +17,8 @@ void init_configuration() {
 	current_configuration.background = NULL;
 
 	current_configuration.shell = NULL;
-	current_configuration.workdir = ".tackle";
-	current_configuration.execution_script = "pinioninit.rc";
+	current_configuration.workdir = ".nyarla";
+	current_configuration.execution_script = "thotep.rc";
 
 	current_configuration.window_list_color[0] = 1.0;
 	current_configuration.window_list_color[1] = 0.0;

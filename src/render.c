@@ -3,9 +3,10 @@
 #include "shaders.def"
 
 #include "stb/stb_image.h"
-#include "pinion.h"
 #include <wlc/wlc-wayland.h>
 #include <wlc/wlc-render.h>
+
+#include "nyarlathotep.h"
 #include "workspace.h"
 
 float* vertices;

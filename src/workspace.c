@@ -1,7 +1,7 @@
 #include "libds/hmap.h"
-#include "pinion.h"
 #include <wlc/wlc-render.h>
 #include "workspace.h"
+#include "nyarlathotep.h"
 
 /* Holds output->workspace hash map */
 hash_table_t* workspaces;
