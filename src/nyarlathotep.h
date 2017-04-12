@@ -22,13 +22,15 @@ void logger_callback(enum wlc_log_type type, const char *str);
 // keyboard_manager.c
 bool keyboard_callback(wlc_handle view, uint32_t time,
 		const struct wlc_modifiers*, uint32_t key, enum wlc_key_state);
-bool mouse_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers*,
-		uint8_t axis_bits, double amount[2]);
 // keyboard_manager.c ends
 
 // mouse_manager.c
 bool mouse_motion(wlc_handle view, uint32_t time,
 		const struct wlc_point* pointer);
+bool mouse_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers*,
+		uint8_t axis_bits, double amount[2]);
+bool mouse_click(wlc_handle view, uint32_t time, const struct wlc_modifiers* mods,
+		uint32_t button, enum wlc_button_state state, const struct wlc_point*);
 // mouse_manager.c ends
 
 // configuration.c

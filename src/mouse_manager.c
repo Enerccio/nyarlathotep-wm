@@ -24,3 +24,9 @@ bool mouse_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers* mo
 
 	return false;
 }
+
+bool mouse_click(wlc_handle view, uint32_t time, const struct wlc_modifiers* mods,
+		uint32_t button, enum wlc_button_state state, const struct wlc_point* point) {
+	wlc_view_focus(view);
+	return false;
+}

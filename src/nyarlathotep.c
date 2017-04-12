@@ -58,6 +58,7 @@ int main(int argc, char** argv) {
 	wlc_set_keyboard_key_cb(keyboard_callback);
 	wlc_set_pointer_motion_cb(mouse_motion);
 	wlc_set_pointer_scroll_cb(mouse_scroll);
+	wlc_set_pointer_button_cb(mouse_click);
 
 	wlc_set_output_context_created_cb(context_open);
 	wlc_set_output_context_destroyed_cb(context_closed);
