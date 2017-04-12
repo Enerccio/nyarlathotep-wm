@@ -2,6 +2,7 @@
 #include <wlc/wlc-render.h>
 #include "workspace.h"
 #include "nyarlathotep.h"
+#include "utils.h"
 
 /* Holds output->workspace hash map */
 hash_table_t* workspaces;
@@ -241,7 +242,17 @@ void workspace_view_got_focus(workspace_t* workspace,
 	if (workspace->main_view == view) {
 		close_window_list(workspace);
 		wlc_view_focus(view);
+		wlc_view_set_state(view, WLC_BIT_ACTIVATED, true);
 	} else {
+		list_iterator_t li;
+		list_create_iterator(workspace->floating_windows, &li);
+		while (list_has_next(&li)) {
+			wlc_handle cview = (wlc_handle)list_next(&li);
+			if (is_parent_view(view, cview)) {
+
+			}
+		}
+
 		// TODO: pinned windows
 
 		// ignore, other windows can get focus

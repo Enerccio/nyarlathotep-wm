@@ -15,5 +15,7 @@ void view_focus_change(wlc_handle view, bool focus) {
 
 	if (focus) {
 		workspace_view_got_focus(workspace, view);
+	} else {
+		wlc_view_set_state(view, WLC_BIT_ACTIVATED, false);
 	}
 }
