@@ -309,6 +309,8 @@ void custom_render(wlc_handle output) {
 		const struct wlc_geometry* geo = wlc_view_get_geometry(workspace->main_view);
 		render_rectangle(output, texture[0], workspace->square_shader, geo->origin.x,
 				geo->origin.y, geo->size.w, geo->size.h);
+
+
 	}
 
 	if (workspace->window_list_show_width > 0) {

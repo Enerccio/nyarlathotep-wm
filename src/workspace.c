@@ -71,8 +71,9 @@ workspace_t* create_workspace(wlc_handle output) {
 
 	workspace->output = output;
 	workspace->hidden_windows = create_list();
+	workspace->floating_windows = create_list();
 
-	ASSERT_MEM(workspace->hidden_windows);
+	ASSERT_MEM(workspace->floating_windows);
 
 	return workspace;
 }

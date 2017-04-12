@@ -27,6 +27,8 @@ typedef struct workspace {
 	wlc_handle main_view;
 
 	list_t* hidden_windows;
+	list_t* floating_windows;
+
 	GLuint square_shader;
 	GLuint square_color_shader;
 
