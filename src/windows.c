@@ -19,3 +19,19 @@ void view_focus_change(wlc_handle view, bool focus) {
 		wlc_view_set_state(view, WLC_BIT_ACTIVATED, false);
 	}
 }
+
+void view_destroyed(wlc_handle view) {
+	workspace_t* workspace = get_workspace_for_view(view);
+	if (workspace == NULL)
+		return;
+	workspace_view_destroyed(workspace, view);
+}
+
+void state_change(wlc_handle view, enum wlc_view_state_bit state, bool change) {
+	workspace_t* workspace = get_workspace_for_view(view);
+	if (workspace == NULL)
+		return;
+	if (state & WLC_BIT_MAXIMIZED) {
+		workspace_maximize_request(workspace, view, change);
+	}
+}

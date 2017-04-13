@@ -40,6 +40,7 @@ typedef struct workspace {
 	wlc_handle window_list_selected_view;
 
 	GLuint background_texture;
+	GLuint cursor_texture;
 
 	bool display_pinion_button; // TODO
 } workspace_t;

@@ -61,6 +61,7 @@ typedef struct list_iterator {
 	list_element_t* current;
 	list_element_t** prev;
 	list_element_t** pprev;
+	uint32_t* ls;
 } list_iterator_t;
 
 list_t* create_list();
@@ -73,6 +74,7 @@ bool list_push_left(list_t* list, void* data);
 bool list_push_right(list_t* list, void* data);
 
 bool list_has_elements(list_t* list);
+bool list_contains(list_t* list, void* element);
 uint32_t list_size(list_t* list);
 void free_list(list_t* list);
 void list_remove(void* element, list_t* list);

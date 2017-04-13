@@ -123,6 +123,32 @@ workspace_t* get_workspace_for_view(wlc_handle view) {
 	return table_get(workspaces, (void*)output);
 }
 
+void workspace_view_destroyed(workspace_t* workspace,
+		wlc_handle view) {
+	if (workspace->main_view == view) {
+		workspace->main_view = 0;
+		wlc_view_focus(0);
+	} else {
+		list_remove((void*)view, workspace->floating_windows);
+		list_remove((void*)view, workspace->hidden_windows);
+		// TODO: pinned
+	}
+	wlc_output_schedule_render(workspace->output);
+}
+
+void workspace_maximize_request(workspace_t* workspace,
+		wlc_handle view, bool change) {
+	if (view == workspace->main_view) {
+		// ignore all changes
+		return;
+	}
+	if (list_contains(workspace->floating_windows, (void*)view)) {
+		wlc_view_set_state(view, WLC_BIT_MAXIMIZED, change);
+		return;
+	}
+	// TODO: pinned windows
+}
+
 void workspace_set_view_hidden(workspace_t* workspace,
 		wlc_handle view) {
 	struct wlc_geometry geometry;
@@ -150,6 +176,12 @@ void workspace_set_main_window(workspace_t* workspace,
 		if (wlc_view_get_parent(view) != 0) {
 			// floating subwindow
 			// TODO handle this shit
+			list_push_right(workspace->floating_windows, (void*)view);
+			if (workspace->main_view != 0 && is_parent_view(workspace->main_view, view)) {
+				wlc_view_set_mask(view, RENDER_MASK);
+				wlc_view_bring_above(view, workspace->main_view);
+				wlc_view_focus(view);
+			}
 		} else {
 			wlc_handle topview = workspace->main_view;
 			workspace->main_view = view;
@@ -244,19 +276,21 @@ void workspace_view_got_focus(workspace_t* workspace,
 		wlc_view_focus(view);
 		wlc_view_set_state(view, WLC_BIT_ACTIVATED, true);
 	} else {
-		list_iterator_t li;
-		list_create_iterator(workspace->floating_windows, &li);
-		while (list_has_next(&li)) {
-			wlc_handle cview = (wlc_handle)list_next(&li);
-			if (is_parent_view(view, cview)) {
-
+		if (list_contains(workspace->floating_windows, (void*)view)) {
+			// TODO: handle pinned subviews
+			if (is_parent_view(workspace->main_view, view)) {
+				wlc_view_focus(view);
+				wlc_view_set_state(view, WLC_BIT_ACTIVATED, true);
+				return;
 			}
+			wlc_view_set_state(view, WLC_BIT_ACTIVATED, false);
+			return;
 		}
-
 		// TODO: pinned windows
 
 		// ignore, other windows can get focus
 	}
+	wlc_view_set_state(view, WLC_BIT_ACTIVATED, false);
 }
 
 /**

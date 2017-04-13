@@ -8,6 +8,7 @@
 
 #include "nyarlathotep.h"
 #include "workspace.h"
+#include "utils.h"
 
 float* vertices;
 float* uvs;
@@ -114,6 +115,96 @@ static void compile_shaders(workspace_t* workspace) {
 	workspace->square_color_shader = compile_shader(__vertex_shader_square, __fragment_shader_square_color);
 }
 
+static void load_image(const char* src, GLuint* ptr, bool preserve_alpha) {
+	if (src == NULL || strcmp(src, "") == 0)
+			return;
+
+	int32_t x, y, channels, reqchannels = (preserve_alpha ? 4 : 3);
+	uint8_t* background = (uint8_t*) stbi_load(src, &x, &y,
+			&channels, reqchannels);
+	if (background == NULL)
+		return;
+
+	if (preserve_alpha) {
+		uint8_t* data;
+		if (channels != 4) {
+			data = malloc(x * y * 4);
+			ASSERT_MEM(data);
+
+			uint32_t srcptr = 0;
+			uint32_t tgtptr = 0;
+			for (uint32_t i = 0; i < x; i++)
+				for (uint32_t j = 0; j < y; j++) {
+					if (channels == 1) {
+						data[tgtptr++] = background[srcptr];
+						data[tgtptr++] = background[srcptr];
+						data[tgtptr++] = background[srcptr];
+						data[tgtptr++] = 255;
+						++srcptr;
+					} else if (channels == 3) {
+						data[tgtptr++] = background[srcptr++];
+						data[tgtptr++] = background[srcptr++];
+						data[tgtptr++] = background[srcptr++];
+						data[tgtptr++] = 255;
+					}
+				}
+			free(background);
+		} else {
+			data = background;
+		}
+
+		GL_CALL(glGenTextures(1, ptr));
+
+		if ((*ptr) == 0)
+			return;
+
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, *ptr));
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
+
+		free(data);
+	} else {
+		uint8_t* data;
+		if (channels != 3) {
+			data = malloc(x * y * 3);
+			ASSERT_MEM(data);
+
+			uint32_t srcptr = 0;
+			uint32_t tgtptr = 0;
+			for (uint32_t i = 0; i < x; i++)
+				for (uint32_t j = 0; j < y; j++) {
+					if (channels == 1) {
+						data[tgtptr++] = background[srcptr];
+						data[tgtptr++] = background[srcptr];
+						data[tgtptr++] = background[srcptr];
+						++srcptr;
+					} else if (channels == 4) {
+						data[tgtptr++] = background[srcptr++];
+						data[tgtptr++] = background[srcptr++];
+						data[tgtptr++] = background[srcptr++];
+						++srcptr;
+					}
+				}
+			free(background);
+		} else {
+			data = background;
+		}
+
+		GL_CALL(glGenTextures(1, ptr));
+
+		if ((*ptr) == 0)
+			return;
+
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, *ptr));
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+
+		free(data);
+	}
+}
+
 void context_open(wlc_handle output) {
 	workspace_t* workspace = get_workspace_for_output(output);
 	if (workspace == NULL)
@@ -121,51 +212,9 @@ void context_open(wlc_handle output) {
 
 	compile_shaders(workspace);
 
-	const char* source_background = get_background();
-	if (source_background == NULL || strcmp(source_background, "") == 0)
-		return;
+	load_image(get_background(), &workspace->background_texture, false);
+	load_image(get_cursor_image(), &workspace->cursor_texture, true);
 
-	int32_t x, y, channels, reqchannels = 3;
-	uint8_t* background = (uint8_t*) stbi_load(source_background, &x, &y,
-			&channels, reqchannels);
-	if (background == NULL)
-		return;
-
-	uint8_t* data;
-	if (channels != 3) {
-		data = malloc(x * y * 3);
-		if (data == NULL)
-			return;
-
-		uint32_t srcptr = 0;
-		uint32_t tgtptr = 0;
-		for (uint32_t i = 0; i < x; i++)
-			for (uint32_t j = 0; j < y; j++) {
-				if (channels == 1) {
-					data[tgtptr++] = background[srcptr];
-					data[tgtptr++] = background[srcptr];
-					data[tgtptr++] = background[srcptr];
-					++srcptr;
-				} else if (channels == 4) {
-					data[tgtptr++] = background[srcptr++];
-					data[tgtptr++] = background[srcptr++];
-					data[tgtptr++] = background[srcptr++];
-					++srcptr;
-				}
-			}
-		free(background);
-	} else {
-		data = background;
-	}
-
-	GL_CALL(glGenTextures(1, &workspace->background_texture));
-
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, workspace->background_texture));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
-
-	free(data);
 }
 
 void context_closed(wlc_handle output) {
@@ -287,15 +336,27 @@ static void render_rectangle_color(wlc_handle output, GLuint program,
 	GL_CALL(glUseProgram(0));
 }
 
-void custom_render(wlc_handle output) {
-	workspace_t* workspace = get_workspace_for_output(output);
-	if (workspace == NULL)
-		return;
+static void render_view_actual(wlc_handle output, wlc_handle view, workspace_t* workspace) {
+	uint32_t texture[3];
+	enum wlc_surface_format fmt;
+	wlc_surface_get_textures(wlc_view_get_surface(view), texture, &fmt);
+	const struct wlc_geometry* geo = wlc_view_get_geometry(view);
+	render_rectangle(output, texture[0], workspace->square_shader, geo->origin.x,
+			geo->origin.y, geo->size.w, geo->size.h);
+}
 
+void custom_render(wlc_handle output) {
 	GL_CALL(glEnable(GL_BLEND));
 	GL_CALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 	GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 	GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+
+	workspace_t* workspace = get_workspace_for_output(output);
+	if (workspace == NULL)
+		return;
+
+	render_rectangle_color(output, workspace->square_color_shader, 0, 0,
+			workspace->w, workspace->h, 0, 0, 0, 1);
 
 	if (workspace->background_texture != 0) {
 		render_rectangle(output, workspace->background_texture,
@@ -303,14 +364,18 @@ void custom_render(wlc_handle output) {
 	}
 
 	if (workspace->main_view != 0) {
-		uint32_t texture[3];
-		enum wlc_surface_format fmt;
-		wlc_surface_get_textures(wlc_view_get_surface(workspace->main_view), texture, &fmt);
-		const struct wlc_geometry* geo = wlc_view_get_geometry(workspace->main_view);
-		render_rectangle(output, texture[0], workspace->square_shader, geo->origin.x,
-				geo->origin.y, geo->size.w, geo->size.h);
+		render_view_actual(output, workspace->main_view, workspace);
 
+		list_iterator_t li;
+		list_create_iterator(workspace->floating_windows, &li);
 
+		while (list_has_next(&li)) {
+			wlc_handle view = (wlc_handle)list_next(&li);
+
+			if (is_parent_view(workspace->main_view, view)) {
+				render_view_actual(output, view, workspace);
+			}
+		}
 	}
 
 	if (workspace->window_list_show_width > 0) {
@@ -364,5 +429,10 @@ void custom_render(wlc_handle output) {
 
 			h += get_size_window_offset();
 		}
+	}
+
+	if (workspace->cursor_texture != 0) {
+		render_rectangle(output, workspace->cursor_texture,
+						workspace->square_shader, workspace->px, workspace->py, 32, 32);
 	}
 }

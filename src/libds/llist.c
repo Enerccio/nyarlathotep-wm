@@ -228,10 +228,33 @@ void list_remove(void* element, list_t* list) {
     if (e) {
     	if (e->previous)
     		e->previous->next = e->next;
+    	else {
+    		list->first = e->next;
+    	}
+
         if (e->next)
             e->next->previous = e->previous;
+        else
+        	list->last = e->previous;
+
         free(e);
+
+        --list->size;
     }
+}
+
+bool list_contains(list_t* list, void* element) {
+	if (list->size == 0)
+		return false;
+
+	list_element_t* e = list->first;
+	while (e != 0) {
+		if (e == element)
+			return true;
+		e = e->next;
+	}
+
+	return false;
 }
 
 /******************************************************************************//**
@@ -265,13 +288,21 @@ void list_remove_by_predicate(void* data, search_predicate_t func, list_t* list)
 	list_element_t* e = list->first;
 	while (e != 0) {
 		if (func(e->data, data)) {
-			if (e->previous != NULL)
+			if (e->previous)
 				e->previous->next = e->next;
-			if (e->next != NULL)
+			else {
+				list->first = e->next;
+			}
+
+			if (e->next)
 				e->next->previous = e->previous;
+			else
+				list->last = e->previous;
+
 			list_element_t* el = e;
 			e = e->next;
 			free(el);
+			--list->size;
 		} else
 			e = e->next;
 	}
@@ -284,6 +315,7 @@ void list_create_iterator(list_t* list, list_iterator_t* li) {
 	li->current = list->first;
 	li->prev = &list->first;
 	li->pprev = NULL;
+	li->ls = &list->size;
 }
 
 /******************************************************************************//**
@@ -312,6 +344,7 @@ void* list_next(list_iterator_t* li) {
  * Removes previously returned element from list_next.
  ********************************************************************************/
 void  list_remove_it(list_iterator_t* li) {
+	// TODO: might be broken
 	list_element_t* remel = *li->pprev;
 	list_element_t* prev = remel->previous;
 	list_element_t* next = remel->next;
@@ -329,4 +362,5 @@ void  list_remove_it(list_iterator_t* li) {
 
 	li->pprev = NULL;
 	free(remel);
+	--(*li->ls);
 }

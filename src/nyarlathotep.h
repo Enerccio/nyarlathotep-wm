@@ -36,6 +36,7 @@ bool mouse_click(wlc_handle view, uint32_t time, const struct wlc_modifiers* mod
 // configuration.c
 void init_configuration();
 
+const char* get_cursor_image();
 const char* get_open_terminal_command();
 const char* get_background();
 const float* get_window_list_color();
@@ -67,9 +68,13 @@ void workspace_set_view_hidden(workspace_t* workspace,
 		wlc_handle view);
 void workspace_set_main_window(workspace_t* workspace,
 		wlc_handle view);
+void workspace_view_destroyed(workspace_t* workspace,
+		wlc_handle view);
 
 void workspace_view_got_focus(workspace_t* workspace,
 		wlc_handle view);
+void workspace_maximize_request(workspace_t* workspace,
+		wlc_handle view, bool change);
 
 bool workspace_handle_key_input(workspace_t* workspace,
 		wlc_handle view, uint32_t time,
@@ -86,6 +91,8 @@ bool workspace_handle_scroll(workspace_t* workspace, wlc_handle view, uint32_t t
 // windows.c
 bool view_created(wlc_handle view);
 void view_focus_change(wlc_handle view, bool focus);
+void view_destroyed(wlc_handle view);
+void state_change(wlc_handle view, enum wlc_view_state_bit state, bool change);
 // windows.c ends
 
 // render.c

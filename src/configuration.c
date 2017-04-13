@@ -7,6 +7,7 @@ void init_configuration() {
 	memset(&current_configuration, 0, sizeof(configuration_t));
 
 	current_configuration.config_file_loc = "/home/enerccio/.nyarla/thotep.conf";
+	current_configuration.cursor_image_source = "/home/enerccio/.nyarla/cursor.png";
 
 	current_configuration.control_key_modifiers =
 			WLC_BIT_MOD_CTRL | WLC_BIT_MOD_ALT;
@@ -66,12 +67,18 @@ static float copy_float(float f) {
 void load_configuration_from_cfg(config_t* config) {
 	configuration_t* c = &current_configuration;
 
+	STRING_VALUE_READ(cursor_image_source, "cursor");
+
 	STRING_VALUE_READ(default_terminal, "default_terminal");
 	STRING_VALUE_READ(workdir, "workdir");
 	STRING_VALUE_READ(execution_script, "initrc");
 
 	STRING_VALUE_READ(background, "background");
 	INT_VALUE_READ(window_list_sizes[0], "window_list_window_size");
+}
+
+const char* get_cursor_image() {
+	return current_configuration.cursor_image_source;
 }
 
 const char* get_open_terminal_command() {

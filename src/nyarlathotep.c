@@ -54,6 +54,8 @@ int main(int argc, char** argv) {
 	wlc_set_view_created_cb(view_created);
 	wlc_set_view_request_geometry_cb(request_geometry);
 	wlc_set_view_focus_cb(view_focus_change);
+	wlc_set_view_destroyed_cb(view_destroyed);
+	wlc_set_view_request_state_cb(state_change);
 
 	wlc_set_keyboard_key_cb(keyboard_callback);
 	wlc_set_pointer_motion_cb(mouse_motion);
