@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+void platform_dependent_logging(enum logging_type, const char* message);
+
 char* path_concat(const char* path, const char* element);
 
 bool directory_exists(const char* dirpath);

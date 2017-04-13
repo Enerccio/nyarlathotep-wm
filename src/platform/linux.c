@@ -1,12 +1,17 @@
 #include "../configuration.h"
 #include "../nyarlathotep.h"
 #include "platform.h"
+#include "../utils.h"
 
 #ifdef linux
 
 #include <unistd.h>
 #include <pwd.h>
 #include <dirent.h>
+
+#ifdef journal_d
+#include <syslog.h>
+#endif
 
 char* path_concat(const char* path, const char* element) {
 	size_t sp = strlen(path);
@@ -57,6 +62,35 @@ const char* get_default_shell() {
 
 	GENERAL_FAILURE("no shell exists");
 	return NULL;
+}
+
+#ifdef journal_d
+int convert_log_type(enum logging_type ltype) {
+	switch (ltype) {
+		case FATAL: return LOG_CRIT;
+		case ERROR: return LOG_ERR;
+		case WARN: return LOG_WARNING;
+		case DEBUG: return LOG_DEBUG;
+		case TRACE: return LOG_DEBUG;
+		default:
+			break;
+	}
+	return LOG_INFO;
+}
+#endif
+
+void platform_dependent_logging(enum logging_type ltype, const char* message) {
+	const char* type = logging_type_str(ltype);
+
+#ifdef journal_d
+	syslog(convert_log_type(ltype), message);
+#endif
+
+	// sys err logging
+	fprintf(stderr, type);
+	fprintf(stderr, ": ");
+	fprintf(stderr, message);
+	fprintf(stderr, "\n");
 }
 
 #endif
