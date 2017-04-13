@@ -1,6 +1,8 @@
 #include "nyarlathotep.h"
 
 bool view_created(wlc_handle view) {
+	LOG_DEBUG("view created");
+
 	workspace_t* workspace = get_workspace_for_view(view);
 	if (workspace == NULL)
 		return false;
@@ -9,6 +11,8 @@ bool view_created(wlc_handle view) {
 }
 
 void view_focus_change(wlc_handle view, bool focus) {
+	LOG_DEBUG("view focus changed");
+
 	workspace_t* workspace = get_workspace_for_view(view);
 	if (workspace == NULL)
 		return;
@@ -21,6 +25,8 @@ void view_focus_change(wlc_handle view, bool focus) {
 }
 
 void view_destroyed(wlc_handle view) {
+	LOG_DEBUG("view destroyed");
+
 	workspace_t* workspace = get_workspace_for_view(view);
 	if (workspace == NULL)
 		return;
@@ -28,6 +34,8 @@ void view_destroyed(wlc_handle view) {
 }
 
 void state_change(wlc_handle view, enum wlc_view_state_bit state, bool change) {
+	LOG_DEBUG("view state changed");
+
 	workspace_t* workspace = get_workspace_for_view(view);
 	if (workspace == NULL)
 		return;

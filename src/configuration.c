@@ -4,6 +4,8 @@
 configuration_t current_configuration;
 
 void init_configuration() {
+	LOG_DEBUG("loading initial configuration");
+
 	memset(&current_configuration, 0, sizeof(configuration_t));
 
 	current_configuration.config_file_loc = "/home/enerccio/.nyarla/thotep.conf";
@@ -53,6 +55,7 @@ static float copy_float(float f) {
 #define VALUE_READ(config, read_op, copy_op, where, type, path ) do { \
 	type v;\
 	if (read_op(config, path, &v) == CONFIG_TRUE) {\
+		LOG_TRACE("loading config key: " path);\
 		c->where = copy_op(v);\
 	}\
 } while (0)
@@ -65,6 +68,8 @@ static float copy_float(float f) {
 	VALUE_READ(config, config_lookup_int, copy_int, where, int, path)
 
 void load_configuration_from_cfg(config_t* config) {
+	LOG_DEBUG("loading configuration from config file");
+
 	configuration_t* c = &current_configuration;
 
 	STRING_VALUE_READ(cursor_image_source, "cursor");

@@ -2,6 +2,7 @@
 
 bool mouse_motion(wlc_handle view, uint32_t time,
 		const struct wlc_point* pointer) {
+	LOG_TRACE("mouse motion triggered");
 
 	workspace_t* active_workspace = get_active_workspace();
 	if (active_workspace != NULL) {
@@ -15,6 +16,7 @@ bool mouse_motion(wlc_handle view, uint32_t time,
 
 bool mouse_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers* mods,
 		uint8_t axis_bits, double amount[2]) {
+	LOG_TRACE("mouse scroll triggered");
 
 	workspace_t* active_workspace = get_active_workspace();
 	if (active_workspace != NULL) {
@@ -27,6 +29,8 @@ bool mouse_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers* mo
 
 bool mouse_click(wlc_handle view, uint32_t time, const struct wlc_modifiers* mods,
 		uint32_t button, enum wlc_button_state state, const struct wlc_point* point) {
+	LOG_TRACE("mouse click triggered");
+
 	wlc_view_focus(view);
 	return false;
 }

@@ -27,6 +27,8 @@ void compositor_ready() {
 	char* wd = get_pinion_workdir();
 	if (current_configuration.execution_script != NULL &&
 			strcmp(current_configuration.execution_script, "") != 0) {
+		LOG_INFO("starting initrc file");
+
 		char* rc = path_concat(wd, current_configuration.execution_script);
 		const char* args[2];
 		args[0] = get_default_shell();
@@ -37,6 +39,7 @@ void compositor_ready() {
 
 int main(int argc, char** argv) {
 	// TODO: arguments
+	LOG_INFO("nyarlathotep window manager starting");
 
 	wlc_log_set_handler(logger_callback);
 
@@ -69,6 +72,7 @@ int main(int argc, char** argv) {
 	if (!wlc_init())
 		return EXIT_FAILURE;
 
+	LOG_INFO("starting wlc event loop");
 	wlc_run();
 
 	return EXIT_SUCCESS;

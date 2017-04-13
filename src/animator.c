@@ -11,6 +11,7 @@ int on_animation(void* passdata) {
 	animator_data_t* animator_data = (animator_data_t*)passdata;
 	bool stop = animator_data->callback(animator_data->data);
 	if (stop) {
+		LOG_TRACE("animation stopped");
 		wlc_event_source_remove(animator_data->event_source);
 		free(animator_data);
 	} else {
@@ -23,6 +24,8 @@ int on_animation(void* passdata) {
 }
 
 void register_animation(animation_request request, void* data, int delay) {
+	LOG_TRACE("animation requested ");
+
 	animator_data_t* passarg = malloc(sizeof(animator_data_t));
 	struct wlc_event_source* event_source = wlc_event_loop_add_timer(on_animation, passarg);
 	passarg->callback = request;
