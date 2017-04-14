@@ -431,8 +431,13 @@ void custom_render(wlc_handle output) {
 		}
 	}
 
-	if (workspace->cursor_texture != 0) {
+	if (workspace->move_over_view == 0 && workspace->cursor_texture != 0) {
+		const int* cursor_offset = get_cursor_offset();
 		render_rectangle(output, workspace->cursor_texture,
-						workspace->square_shader, workspace->px, workspace->py, 32, 32);
+						workspace->square_shader, workspace->px + cursor_offset[0],
+						workspace->py + cursor_offset[1], 32, 32);
+	} else if (workspace->move_over_view > 0) {
+		struct wl_client* client = wlc_view_get_wl_client(workspace->move_over_view);
+		struct wl_resource* r = wl_client_get_object(client, 0);
 	}
 }

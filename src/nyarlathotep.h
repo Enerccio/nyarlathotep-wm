@@ -10,6 +10,7 @@
 #include <stdlib.h>
 
 #include <wlc/wlc.h>
+#include <wayland-server.h>
 
 #include "macros.h"
 
@@ -31,12 +32,16 @@ bool mouse_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers*,
 		uint8_t axis_bits, double amount[2]);
 bool mouse_click(wlc_handle view, uint32_t time, const struct wlc_modifiers* mods,
 		uint32_t button, enum wlc_button_state state, const struct wlc_point*);
+bool mouse_touch(wlc_handle view, uint32_t time,
+		const struct wlc_modifiers* mods, enum wlc_touch_type type, int32_t slot,
+		const struct wlc_point* point);
 // mouse_manager.c ends
 
 // configuration.c
 void init_configuration();
 
 const char* get_cursor_image();
+const int* get_cursor_offset();
 const char* get_open_terminal_command();
 const char* get_background();
 const float* get_window_list_color();

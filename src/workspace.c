@@ -25,8 +25,7 @@ bool output_created(wlc_handle output) {
 	}
 
 	workspace_t* workspace = create_workspace(output);
-	if (workspace == NULL)
-		return false; // failed to allocate memory
+
 	table_set(workspaces, (void*)output, (void*)workspace);
 	wlc_output_set_mask(output, RENDER_MASK);
 	return true;
@@ -75,6 +74,7 @@ workspace_t* create_workspace(wlc_handle output) {
 	workspace->floating_windows = create_list();
 
 	ASSERT_MEM(workspace->floating_windows);
+	ASSERT_MEM(workspace->hidden_windows);
 
 	return workspace;
 }
@@ -125,6 +125,10 @@ workspace_t* get_workspace_for_view(wlc_handle view) {
 
 void workspace_view_destroyed(workspace_t* workspace,
 		wlc_handle view) {
+	if (workspace->move_over_view == view) {
+		workspace->move_over_view = 0;
+	}
+
 	if (workspace->main_view == view) {
 		workspace->main_view = 0;
 		wlc_view_focus(0);
@@ -275,6 +279,7 @@ void workspace_view_got_focus(workspace_t* workspace,
 		close_window_list(workspace);
 		wlc_view_focus(view);
 		wlc_view_set_state(view, WLC_BIT_ACTIVATED, true);
+		return;
 	} else {
 		if (list_contains(workspace->floating_windows, (void*)view)) {
 			// TODO: handle pinned subviews
@@ -321,10 +326,16 @@ bool workspace_handle_mouse_motion(workspace_t* workspace, wlc_handle view, uint
 		const struct wlc_point* pointer) {
 	workspace->px = pointer->x;
 	workspace->py = pointer->y;
+	workspace->move_over_view = view;
+
+	if (pointer->x >= workspace->w-workspace->window_list_show_width) {
+		workspace->move_over_view = 0;
+		return false;
+	}
 
 	if (pointer->x >= workspace->w-1) {
 		open_window_list(workspace);
-		return false;
+		return true;
 	}
 	return false;
 }
@@ -337,6 +348,7 @@ bool workspace_handle_scroll(workspace_t* workspace, wlc_handle view, uint32_t t
 		if (axis_bits & WLC_SCROLL_AXIS_VERTICAL) {
 			workspace->window_list_scroll_offset += amount[0];
 			wlc_output_schedule_render(workspace->output);
+			return true;
 		}
 	}
 

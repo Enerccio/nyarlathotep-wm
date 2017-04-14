@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lwlc -lconfig -lGLESv2 -lm
+LIBS := -lwlc -lwayland-server -lconfig -lGLESv2 -lm
 

@@ -31,14 +31,21 @@
 									<listOptionValue builtIn="false" value="journal_d"/>
 									<listOptionValue builtIn="false" value="LOG_LEVEL=1"/>
 								</option>
+								<option id="gnu.c.compiler.option.include.paths.779511126" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr2/fast/projects/pinion/xwlc/wlc/include"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1093538435" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.994554370" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
 								<option id="gnu.c.link.option.libs.418299133" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="wlc"/>
+									<listOptionValue builtIn="false" value="wayland-server"/>
 									<listOptionValue builtIn="false" value="config"/>
 									<listOptionValue builtIn="false" value="GLESv2"/>
 									<listOptionValue builtIn="false" value="m"/>
+								</option>
+								<option id="gnu.c.link.option.paths.1182737483" name="Library search path (-L)" superClass="gnu.c.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
+									<listOptionValue builtIn="false" value="/usr2/fast/projects/pinion/xwlc/wlc/target/src"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1758495028" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

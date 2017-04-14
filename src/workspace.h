@@ -22,6 +22,7 @@ typedef struct workspace {
 	wlc_handle output;
 	int w, h;
 	int px, py;
+	wlc_handle move_over_view;
 
 	wlc_handle fullscreen_view;
 	wlc_handle main_view;
