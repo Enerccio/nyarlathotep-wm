@@ -345,6 +345,37 @@ static void render_view_actual(wlc_handle output, wlc_handle view, workspace_t* 
 			geo->origin.y, geo->size.w, geo->size.h);
 }
 
+static void render_mouse_pointer(workspace_t* workspace, wlc_handle output) {
+	// TODO: change cursors when needed (at side panel, etc)
+	GLuint cursor_texture = workspace->cursor_texture;
+
+	GLuint texture[3];
+	enum wlc_surface_format format;
+	struct wlc_point tip;
+	struct wlc_size size;
+
+	if (wlc_get_active_pointer(output, texture, &format, &tip, &size)) {
+		// got pointer from wlc
+		if (format != INVALID) {
+			cursor_texture = texture[0];
+		} else {
+			tip.x = get_cursor_offset()[0];
+			tip.y = get_cursor_offset()[1];
+			size.w = 32;
+			size.h = 32;
+		}
+	} else {
+		tip.x = get_cursor_offset()[0];
+		tip.y = get_cursor_offset()[1];
+		size.w = 32;
+		size.h = 32;
+	}
+
+	render_rectangle(output, cursor_texture,
+					workspace->square_shader, workspace->px - tip.x,
+					workspace->py - tip.y, size.w, size.h);
+}
+
 void custom_render(wlc_handle output) {
 	GL_CALL(glEnable(GL_BLEND));
 	GL_CALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
@@ -431,13 +462,5 @@ void custom_render(wlc_handle output) {
 		}
 	}
 
-	if (workspace->move_over_view == 0 && workspace->cursor_texture != 0) {
-		const int* cursor_offset = get_cursor_offset();
-		render_rectangle(output, workspace->cursor_texture,
-						workspace->square_shader, workspace->px + cursor_offset[0],
-						workspace->py + cursor_offset[1], 32, 32);
-	} else if (workspace->move_over_view > 0) {
-		struct wl_client* client = wlc_view_get_wl_client(workspace->move_over_view);
-		struct wl_resource* r = wl_client_get_object(client, 0);
-	}
+	render_mouse_pointer(workspace, output);
 }
