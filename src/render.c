@@ -411,8 +411,8 @@ static void render_mouse_pointer(workspace_t* workspace, wlc_handle output) {
 		texture[0] = cursor_texture;
 	}
 
-	fprintf(stdout, "cursor: %i, %i, %i -> %i - %i;\n", texture[0], texture[1], texture[2], program, format);
-	fflush(stdout);
+//	fprintf(stdout, "cursor: %i, %i, %i -> %i - %i;\n", texture[0], texture[1], texture[2], program, format);
+//	fflush(stdout);
 
 	render_rectangle(output, texture,
 					program, workspace->px - tip.x,

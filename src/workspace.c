@@ -204,6 +204,7 @@ void workspace_set_main_window(workspace_t* workspace,
 			wlc_view_set_geometry(view, 0, &geometry);
 			wlc_view_set_mask(view, RENDER_MASK);
 			wlc_view_set_state(view, WLC_BIT_MAXIMIZED, true);
+			wlc_view_bring_to_front(view);
 			wlc_view_focus(view);
 		}
 	}
