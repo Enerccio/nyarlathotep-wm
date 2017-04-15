@@ -373,6 +373,20 @@ static void render_view_actual(wlc_handle output, wlc_handle view, workspace_t* 
 
 	render_rectangle(output, texture, workspace->render_mode_shaders[fmt], geo->origin.x,
 			geo->origin.y, geo->size.w, geo->size.h);
+
+	size_t numsubviews;
+	const wlc_resource* subsurfs = wlc_surface_get_subsurfaces(
+			wlc_view_get_surface(view), &numsubviews);
+
+	for (size_t i=0; i<numsubviews; i++) {
+		const wlc_resource resource = subsurfs[i];
+		wlc_surface_get_textures(resource, texture, &fmt);
+		struct wlc_geometry outg;
+		wlc_get_subsurface_geometry(resource, &outg);
+		render_rectangle(output, texture, workspace->render_mode_shaders[fmt],
+				geo->origin.x + outg.origin.x, geo->origin.y + outg.origin.y,
+				outg.size.w, outg.size.h);
+	}
 }
 
 static void render_mouse_pointer(workspace_t* workspace, wlc_handle output) {
