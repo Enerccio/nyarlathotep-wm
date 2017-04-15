@@ -62,6 +62,8 @@ extern void platform_dependent_logging(enum logging_type, const char* message);
 #define NO_RENDER_MASK (0)
 #define RENDER_MASK (1)
 
+#define CLAMP(x, y) (x > y ? y : x)
+
 #define RENDER_SELECTED_WINDOW_LIST_OFFSET (5)
 
 #endif /* MACROS_H_ */

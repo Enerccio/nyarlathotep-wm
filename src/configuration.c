@@ -16,6 +16,7 @@ void init_configuration() {
 	current_configuration.control_key_modifiers =
 			WLC_BIT_MOD_CTRL | WLC_BIT_MOD_ALT;
 	current_configuration.open_terminal_key = XKB_KEY_t;
+	current_configuration.move_window_to_background = XKB_KEY_m;
 
 	current_configuration.default_terminal = "weston-terminal";
 	// TODO
@@ -112,6 +113,11 @@ const float* get_window_list_selection_color() {
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods) {
 	return key == current_configuration.open_terminal_key &&
 			mods.mods == current_configuration.control_key_modifiers;
+}
+
+bool window_move_to_background_pressed(uint32_t key, struct wlc_modifiers mods) {
+	return key == current_configuration.move_window_to_background &&
+				mods.mods == current_configuration.control_key_modifiers;
 }
 
 int get_side_window_height() {

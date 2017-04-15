@@ -43,3 +43,28 @@ void state_change(wlc_handle view, enum wlc_view_state_bit state, bool change) {
 		workspace_maximize_request(workspace, view, change);
 	}
 }
+
+void request_geometry(wlc_handle view, const struct wlc_geometry* geometry) {
+	workspace_t* workspace = get_workspace_for_view(view);
+	if (workspace == NULL)
+		return;
+
+	wlc_handle parent = wlc_view_get_parent(view);
+	if (parent == 0) {
+		// no effect to prevent user resizes
+	} else {
+		struct wlc_geometry g;
+		g = *geometry;
+
+		const struct wlc_geometry* anchor_rect = wlc_view_positioner_get_anchor_rect(view);
+		if (anchor_rect) {
+			const struct wlc_size* request = wlc_view_positioner_get_size(view);
+			if (request->h > 0 && request->w > 0) {
+				g.size = *request;
+			}
+			g.origin = anchor_rect->origin;
+		}
+
+		handle_float_view_geometry(workspace, view, &g);
+	}
+}

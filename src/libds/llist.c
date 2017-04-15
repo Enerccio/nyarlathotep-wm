@@ -249,7 +249,7 @@ bool list_contains(list_t* list, void* element) {
 
 	list_element_t* e = list->first;
 	while (e != 0) {
-		if (e == element)
+		if (e->data == element)
 			return true;
 		e = e->next;
 	}

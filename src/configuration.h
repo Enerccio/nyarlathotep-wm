@@ -12,6 +12,7 @@ typedef struct configuration {
 
 	uint32_t control_key_modifiers;
 	uint32_t open_terminal_key;
+	uint32_t move_window_to_background;
 
 	const char* shell;
 	const char* workdir;

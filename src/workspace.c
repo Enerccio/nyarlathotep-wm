@@ -275,6 +275,9 @@ void close_window_list(workspace_t* workspace) {
 
 void workspace_view_got_focus(workspace_t* workspace,
 		wlc_handle view) {
+
+	workspace->focused_view = view;
+
 	if (workspace->main_view == view) {
 		close_window_list(workspace);
 		wlc_view_focus(view);
@@ -298,6 +301,35 @@ void workspace_view_got_focus(workspace_t* workspace,
 	wlc_view_set_state(view, WLC_BIT_ACTIVATED, false);
 }
 
+void move_view_to_background(workspace_t* workspace) {
+	if (workspace->focused_view) {
+		if (workspace->focused_view == workspace->fullscreen_view) {
+			// TODO: handle
+		} else if (workspace->main_view == workspace->focused_view) {
+			workspace->main_view = 0;
+		} else {
+			// TODO: handle pinned windows
+		}
+
+		wlc_view_set_state(workspace->focused_view, WLC_BIT_ACTIVATED, false);
+		wlc_view_set_mask(workspace->focused_view, NO_RENDER_MASK);
+		list_push_left(workspace->hidden_windows, (void*)workspace->focused_view);
+		workspace->focused_view = 0;
+	}
+}
+
+void handle_float_view_geometry(workspace_t* workspace, wlc_handle view,
+		const struct wlc_geometry* geometry) {
+
+	struct wlc_geometry g;
+	g.origin.x = geometry->origin.x;
+	g.origin.y = geometry->origin.y;
+	g.size.w = CLAMP(geometry->size.w, workspace->w);
+	g.size.h = CLAMP(geometry->size.h, workspace->h);
+
+	wlc_view_set_geometry(view, 0, &g);
+}
+
 /**
  * Handles all key inputs related to workspace
  */
@@ -315,6 +347,13 @@ bool workspace_handle_key_input(workspace_t* workspace,
 			args[0] = terminal;
 			args[1] = NULL;
 			wlc_exec(terminal, (char * const*)&args);
+		}
+		return true;
+	}
+
+	if (window_move_to_background_pressed(symkey, *mods)) {
+		if (state == WLC_KEY_STATE_PRESSED) {
+			move_view_to_background(workspace);
 		}
 		return true;
 	}

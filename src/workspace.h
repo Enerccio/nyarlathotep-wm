@@ -24,14 +24,15 @@ typedef struct workspace {
 	int px, py;
 	wlc_handle move_over_view;
 
+	wlc_handle focused_view;
 	wlc_handle fullscreen_view;
 	wlc_handle main_view;
 
 	list_t* hidden_windows;
 	list_t* floating_windows;
 
-	GLuint square_shader;
-	GLuint square_color_shader;
+	GLuint plane_color_shader;
+	GLuint* render_mode_shaders;
 
 	bool window_list_opening;
 	bool window_list_force_hide;
@@ -44,6 +45,7 @@ typedef struct workspace {
 	GLuint cursor_texture;
 
 	bool display_pinion_button; // TODO
+	bool context_inited;
 } workspace_t;
 
 workspace_t* create_workspace(wlc_handle handle);

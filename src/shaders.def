@@ -1,4 +1,4 @@
-char* __vertex_shader_square = "#version 100\n"
+static char* __vertex_shader_plane = "#version 100\n"
 		"precision mediump float;\n"
 		"\n"
 		"uniform vec2 resolution;\n"
@@ -18,7 +18,7 @@ char* __vertex_shader_square = "#version 100\n"
 		"	v_uv = uv;\n"
 		"}\n";
 		
-char* __fragment_shader_square_texture = "#version 100\n"
+static char* __fragment_shader_rgb = "#version 100\n"
 		"precision mediump float;\n"
 		"\n"
 		"varying vec2 v_uv;\n"
@@ -26,10 +26,21 @@ char* __fragment_shader_square_texture = "#version 100\n"
 		"\n"
 		"void main() {\n"
 		"	vec4 color = texture2D(texture, v_uv);\n"
-		"	gl_FragColor = color;\n"
+		"	gl_FragColor = vec4(color.xyz, 1.0);\n"
+		"}\n";
+		
+static char* __fragment_shader_rgba = "#version 100\n"
+		"precision mediump float;\n"
+		"\n"
+		"varying vec2 v_uv;\n"
+		"uniform sampler2D texture;\n"
+		"\n"
+		"void main() {\n"
+		"	vec4 color = texture2D(texture, v_uv);\n"
+		"	gl_FragColor = vec4(color.xyz, color.w);\n"
 		"}\n";
 
-char* __fragment_shader_square_color = "#version 100\n"
+static char* __fragment_shader_plane_color = "#version 100\n"
 		"precision mediump float;\n"
 		"\n"
 		"varying vec2 v_uv;\n"
@@ -38,3 +49,83 @@ char* __fragment_shader_square_color = "#version 100\n"
 		"void main() {\n"
 		"	gl_FragColor = color;\n"
 		"}\n";
+
+static char* __fragment_shader_wlc_cursor = "#version 100\n"
+      "precision mediump float;\n"
+      "uniform sampler2D texture;\n"
+      "varying vec2 v_uv;\n"
+      "\n"
+      "void main() {\n"
+      "  vec4 palette[3];\n"
+      "  palette[0] = vec4(0.0, 0.0, 0.0, 1.0);\n"
+      "  palette[1] = vec4(1.0, 1.0, 1.0, 1.0);\n"
+      "  palette[2] = vec4(0.0, 0.0, 0.0, 0.0);\n"
+      "  gl_FragColor = palette[int(texture2D(texture, v_uv).x * 256.0)];\n"
+      "}\n";
+      
+static char* __fragment_shader_dummy = "#version 100\n"
+      "precision mediump float;\n"
+      "\n"
+      "void main() {\n"
+      "  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+      "}\n";
+      
+static char *__fragment_shader_egl = "#version 100\n"
+      "#extension GL_OES_EGL_image_external : require\n"
+      "precision mediump float;\n"
+      "uniform samplerExternalOES texture;\n"
+      "varying vec2 v_uv;\n"
+      "void main()\n"
+      "\n"
+      "{\n"
+      "  vec4 col = texture2D(texture, v_uv);\n"
+      "  gl_FragColor = vec4(col.xyz, col.w)\n;"
+      "}\n";
+
+#define FRAGMENT_CONVERT_YUV                                        \
+   "  gl_FragColor.r = y + 1.59602678 * v;\n"                    \
+   "  gl_FragColor.g = y - 0.39176229 * u - 0.81296764 * v;\n"   \
+   "  gl_FragColor.b = y + 2.01723214 * u;\n"                    \
+   "  gl_FragColor.a = 1.0;\n"
+
+static char *__fragment_shader_y_uv = "#version 100\n"
+      "precision mediump float;\n"
+      "uniform sampler2D texture;\n"
+      "uniform sampler2D texture1;\n"
+      "varying vec2 v_uv;\n"
+      "\n"
+      "void main() {\n"
+      "  float y = 1.16438356 * (texture2D(texture, v_uv).x - 0.0625);\n"
+      "  float u = texture2D(texture1, v_uv).x - 0.5;\n"
+      "  float v = texture2D(texture1, v_uv).y - 0.5;\n"
+      FRAGMENT_CONVERT_YUV
+      "}\n";
+
+static char *__fragment_shader_y_u_v = "#version 100\n"
+      "precision mediump float;\n"
+      "uniform sampler2D texture;\n"
+      "uniform sampler2D texture1;\n"
+      "uniform sampler2D texture2;\n"
+      "varying vec2 v_uv;\n"
+      "\n"
+      "void main() {\n"
+      "  float y = 1.16438356 * (texture2D(texture, v_uv).x - 0.0625);\n"
+      "  float u = texture2D(texture1, v_uv).x - 0.5;\n"
+      "  float v = texture2D(texture2, v_uv).x - 0.5;\n"
+      FRAGMENT_CONVERT_YUV
+      "}\n";
+
+static char *__fragment_shader_y_xuxv = "#version 100\n"
+      "precision mediump float;\n"
+      "uniform sampler2D texture;\n"
+      "uniform sampler2D texture1;\n"
+      "varying vec2 v_uv;\n"
+      "\n"
+      "void main() {\n"
+      "  float y = 1.16438356 * (texture2D(texture, v_uv).x - 0.0625);\n"
+      "  float u = texture2D(texture1, v_uv).y - 0.5;\n"
+      "  float v = texture2D(texture1, v_uv).w - 0.5;\n"
+      FRAGMENT_CONVERT_YUV
+      "}\n";
+      
+#undef FRAGMENT_CONVERT_YUV

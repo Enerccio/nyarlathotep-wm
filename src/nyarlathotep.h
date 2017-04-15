@@ -50,6 +50,7 @@ int get_side_window_height();
 int get_size_window_offset();
 
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods);
+bool window_move_to_background_pressed(uint32_t key, struct wlc_modifiers mods);
 // configuration.c ends
 
 // animator.c
@@ -75,6 +76,8 @@ void workspace_set_main_window(workspace_t* workspace,
 		wlc_handle view);
 void workspace_view_destroyed(workspace_t* workspace,
 		wlc_handle view);
+void handle_float_view_geometry(workspace_t* workspace,
+		wlc_handle view, const struct wlc_geometry* geometry);
 
 void workspace_view_got_focus(workspace_t* workspace,
 		wlc_handle view);
@@ -98,6 +101,7 @@ bool view_created(wlc_handle view);
 void view_focus_change(wlc_handle view, bool focus);
 void view_destroyed(wlc_handle view);
 void state_change(wlc_handle view, enum wlc_view_state_bit state, bool change);
+void request_geometry(wlc_handle view, const struct wlc_geometry* geometry);
 // windows.c ends
 
 // render.c

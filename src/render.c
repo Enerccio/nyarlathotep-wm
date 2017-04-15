@@ -34,6 +34,8 @@ gl_error_string(const GLenum error) {
 	return "UNKNOWN GL ERROR";
 }
 
+#define GL_CALL(x) x; gl_call(__PRETTY_FUNCTION__, __LINE__, STRINGIZE(x))
+
 static
 void gl_call(const char *func, uint32_t line, const char *glfunc) {
 	GLenum error;
@@ -46,12 +48,6 @@ void gl_call(const char *func, uint32_t line, const char *glfunc) {
 
 	logger_callback(WLC_LOG_ERROR, msg);
 }
-
-#ifndef __STRING
-#define __STRING(x) #x
-#endif
-
-#define GL_CALL(x) x; gl_call(__PRETTY_FUNCTION__, __LINE__, __STRING(x))
 
 static GLuint create_shader(const char *source, GLenum shader_type) {
 	GLuint shader = glCreateShader(shader_type);
@@ -110,9 +106,21 @@ static GLuint compile_shader(char* vertex_shader, char* fragment_shader) {
 	return program;
 }
 
+#define SHADER_LIST_SIZE (8)
+
 static void compile_shaders(workspace_t* workspace) {
-	workspace->square_shader = compile_shader(__vertex_shader_square, __fragment_shader_square_texture);
-	workspace->square_color_shader = compile_shader(__vertex_shader_square, __fragment_shader_square_color);
+	workspace->render_mode_shaders = malloc(sizeof(GLuint) * SHADER_LIST_SIZE);
+	ASSERT_MEM(workspace->render_mode_shaders);
+	workspace->plane_color_shader = compile_shader(__vertex_shader_plane, __fragment_shader_plane_color);
+
+	workspace->render_mode_shaders[SURFACE_RGB] = compile_shader(__vertex_shader_plane, __fragment_shader_rgb);
+	workspace->render_mode_shaders[SURFACE_RGBA] = compile_shader(__vertex_shader_plane, __fragment_shader_rgba);
+	workspace->render_mode_shaders[SURFACE_EGL] = compile_shader(__vertex_shader_plane, __fragment_shader_egl);
+	workspace->render_mode_shaders[SURFACE_Y_UV] = compile_shader(__vertex_shader_plane, __fragment_shader_y_uv);
+	workspace->render_mode_shaders[SURFACE_Y_U_V] = compile_shader(__vertex_shader_plane, __fragment_shader_y_u_v);
+	workspace->render_mode_shaders[SURFACE_Y_XUXV] = compile_shader(__vertex_shader_plane, __fragment_shader_y_xuxv);
+	workspace->render_mode_shaders[SURFACE_WLC_POINTER] = compile_shader(__vertex_shader_plane, __fragment_shader_wlc_cursor);
+	workspace->render_mode_shaders[INVALID] = compile_shader(__vertex_shader_plane, __fragment_shader_dummy);
 }
 
 static void load_image(const char* src, GLuint* ptr, bool preserve_alpha) {
@@ -210,11 +218,11 @@ void context_open(wlc_handle output) {
 	if (workspace == NULL)
 		return;
 
+	workspace->context_inited = true;
 	compile_shaders(workspace);
 
 	load_image(get_background(), &workspace->background_texture, false);
 	load_image(get_cursor_image(), &workspace->cursor_texture, true);
-
 }
 
 void context_closed(wlc_handle output) {
@@ -222,10 +230,17 @@ void context_closed(wlc_handle output) {
 	if (workspace == NULL)
 		return;
 
-	GL_CALL(glDeleteTextures(1, &workspace->background_texture));
-	GL_CALL(glDeleteProgram(workspace->square_shader));
+	if (!workspace->context_inited)
+		return;
 
-	workspace->square_shader = workspace->background_texture = 0;
+	GL_CALL(glDeleteTextures(1, &workspace->background_texture));
+	for (int i=0; i<SHADER_LIST_SIZE; i++) {
+		GL_CALL(glDeleteProgram(workspace->render_mode_shaders[i]));
+	}
+	free(workspace->render_mode_shaders);
+	workspace->background_texture = 0;
+
+	workspace->context_inited = false;
 }
 
 void rectangle_vertices(float* vertices, const float w, const float h) {
@@ -271,7 +286,7 @@ void uv_vertices(float* uvs, const float uv1a, const float uv1b,
 	uvs[11] = uv2b;
 }
 
-static void render_rectangle(wlc_handle output, GLuint texture, GLuint program,
+static void render_rectangle(wlc_handle output, GLuint* texture, GLuint program,
 		int32_t x, int32_t y, uint32_t w, uint32_t h) {
 	const struct wlc_size* render_size = wlc_output_get_resolution(output);
 
@@ -285,16 +300,30 @@ static void render_rectangle(wlc_handle output, GLuint texture, GLuint program,
 	GLuint uniformResolution = GL_CALL(glGetUniformLocation(program, "resolution"));
 	GLuint uniformOrigin = GL_CALL(glGetUniformLocation(program, "origin"));
 	GLuint uniformTexture = GL_CALL(glGetUniformLocation(program, "texture"));
+	GLuint uniformTexture2 = GL_CALL(glGetUniformLocation(program, "texture1"));
+	GLuint uniformTexture3 = GL_CALL(glGetUniformLocation(program, "texture2"));
 
 	GL_CALL(glEnableVertexAttribArray(attributePosition));
 	GL_CALL(glVertexAttribPointer(attributePosition, 4, GL_FLOAT, false, 0, vertices));
 	GL_CALL(glEnableVertexAttribArray(attributeUV));
 	GL_CALL(glVertexAttribPointer(attributeUV, 2, GL_FLOAT, false, 0, uvs));
 
-	if (texture > 0) {
+	if (uniformTexture < 0xffffffff && texture[0] > 0) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
-		GL_CALL(glBindTexture(GL_TEXTURE_2D, texture));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, texture[0]));
 		GL_CALL(glUniform1i(uniformTexture, 0));
+	}
+
+	if (uniformTexture2 < 0xffffffff) {
+		GL_CALL(glActiveTexture(GL_TEXTURE1));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, texture[1]));
+		GL_CALL(glUniform1i(uniformTexture2, 1));
+	}
+
+	if (uniformTexture3 < 0xffffffff) {
+		GL_CALL(glActiveTexture(GL_TEXTURE2));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, texture[2]));
+		GL_CALL(glUniform1i(uniformTexture2, 2));
 	}
 
 	GL_CALL(glUniform2f(uniformResolution, render_size->w, render_size->h));
@@ -341,13 +370,14 @@ static void render_view_actual(wlc_handle output, wlc_handle view, workspace_t* 
 	enum wlc_surface_format fmt;
 	wlc_surface_get_textures(wlc_view_get_surface(view), texture, &fmt);
 	const struct wlc_geometry* geo = wlc_view_get_geometry(view);
-	render_rectangle(output, texture[0], workspace->square_shader, geo->origin.x,
+
+	render_rectangle(output, texture, workspace->render_mode_shaders[fmt], geo->origin.x,
 			geo->origin.y, geo->size.w, geo->size.h);
 }
 
 static void render_mouse_pointer(workspace_t* workspace, wlc_handle output) {
-	// TODO: change cursors when needed (at side panel, etc)
 	GLuint cursor_texture = workspace->cursor_texture;
+	GLuint program = 0;
 
 	GLuint texture[3];
 	enum wlc_surface_format format;
@@ -357,22 +387,35 @@ static void render_mouse_pointer(workspace_t* workspace, wlc_handle output) {
 	if (wlc_get_active_pointer(output, texture, &format, &tip, &size)) {
 		// got pointer from wlc
 		if (format != INVALID) {
-			cursor_texture = texture[0];
+			program = workspace->render_mode_shaders[format];
 		} else {
 			tip.x = get_cursor_offset()[0];
 			tip.y = get_cursor_offset()[1];
 			size.w = 32;
 			size.h = 32;
+			program = workspace->render_mode_shaders[SURFACE_RGBA];
 		}
 	} else {
-		tip.x = get_cursor_offset()[0];
-		tip.y = get_cursor_offset()[1];
-		size.w = 32;
-		size.h = 32;
+		if (format != INVALID) {
+			program = workspace->render_mode_shaders[format];
+		} else {
+			tip.x = get_cursor_offset()[0];
+			tip.y = get_cursor_offset()[1];
+			size.w = 32;
+			size.h = 32;
+			program = workspace->render_mode_shaders[SURFACE_RGBA];
+		}
 	}
 
-	render_rectangle(output, cursor_texture,
-					workspace->square_shader, workspace->px - tip.x,
+	if (texture[0] == 0) {
+		texture[0] = cursor_texture;
+	}
+
+	fprintf(stdout, "cursor: %i, %i, %i -> %i - %i;\n", texture[0], texture[1], texture[2], program, format);
+	fflush(stdout);
+
+	render_rectangle(output, texture,
+					program, workspace->px - tip.x,
 					workspace->py - tip.y, size.w, size.h);
 }
 
@@ -386,12 +429,12 @@ void custom_render(wlc_handle output) {
 	if (workspace == NULL)
 		return;
 
-	render_rectangle_color(output, workspace->square_color_shader, 0, 0,
+	render_rectangle_color(output, workspace->plane_color_shader, 0, 0,
 			workspace->w, workspace->h, 0, 0, 0, 1);
 
 	if (workspace->background_texture != 0) {
-		render_rectangle(output, workspace->background_texture,
-				workspace->square_shader, 0, 0, workspace->w, workspace->h);
+		render_rectangle(output, &workspace->background_texture,
+				workspace->render_mode_shaders[SURFACE_RGB], 0, 0, workspace->w, workspace->h);
 	}
 
 	if (workspace->main_view != 0) {
@@ -413,7 +456,7 @@ void custom_render(wlc_handle output) {
 		const float* window_list_color = get_window_list_color();
 		const float* window_list_sel_color = get_window_list_selection_color();
 
-		render_rectangle_color(output, workspace->square_color_shader,
+		render_rectangle_color(output, workspace->plane_color_shader,
 				workspace->w - workspace->window_list_show_width, 0,
 				workspace->window_list_show_width, workspace->h,
 				window_list_color[0], window_list_color[1],
@@ -448,14 +491,14 @@ void custom_render(wlc_handle output) {
 			wlc_surface_get_textures(wlc_view_get_surface(view), texture, &fmt);
 
 			if (view == workspace->window_list_selected_view) {
-				render_rectangle_color(output, workspace->square_color_shader,
+				render_rectangle_color(output, workspace->plane_color_shader,
 								wlx - RENDER_SELECTED_WINDOW_LIST_OFFSET, wly - RENDER_SELECTED_WINDOW_LIST_OFFSET,
 								win_width + (2*RENDER_SELECTED_WINDOW_LIST_OFFSET), get_side_window_height() + (2*RENDER_SELECTED_WINDOW_LIST_OFFSET),
 								window_list_sel_color[0], window_list_sel_color[1],
 								window_list_sel_color[2], window_list_sel_color[3]);
 			}
 
-			render_rectangle(output, texture[0], workspace->square_shader, wlx,
+			render_rectangle(output, texture, workspace->render_mode_shaders[fmt], wlx,
 							wly, win_width, get_side_window_height());
 
 			h += get_size_window_offset();

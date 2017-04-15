@@ -30,9 +30,11 @@ bool mouse_scroll(wlc_handle view, uint32_t time, const struct wlc_modifiers* mo
 
 bool mouse_click(wlc_handle view, uint32_t time, const struct wlc_modifiers* mods,
 		uint32_t button, enum wlc_button_state state, const struct wlc_point* point) {
-	LOG_TRACE("mouse click triggered");
+	LOG_DEBUG("mouse click triggered");
 
-	wlc_view_focus(view);
+	if (state == WLC_BUTTON_STATE_PRESSED)
+		wlc_view_focus(view);
+
 	return false;
 }
 

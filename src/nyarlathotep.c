@@ -3,15 +3,6 @@
 #include "configuration.h"
 #include "platform/platform.h"
 
-void request_geometry(wlc_handle view, const struct wlc_geometry* geometry) {
-	wlc_handle parent = wlc_view_get_parent(view);
-	if (parent == 0) {
-		// no effect to prevent user resizes
-	} else {
-		wlc_view_set_geometry(view, 0, geometry);
-	}
-}
-
 void load_config() {
 	// TODO: arguments
 	config_t config;
