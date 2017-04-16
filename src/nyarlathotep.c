@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 
 	wlc_set_output_context_created_cb(context_open);
 	wlc_set_output_context_destroyed_cb(context_closed);
-	wlc_set_output_render_post_cb(custom_render);
+	wlc_set_output_render_pre_swap_cb(custom_render);
 
 	if (!wlc_init())
 		return EXIT_FAILURE;
