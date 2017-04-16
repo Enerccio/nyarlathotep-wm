@@ -7,6 +7,10 @@ enum logging_type {
 
 extern void platform_dependent_logging(enum logging_type, const char* message);
 
+#ifndef LOG_LEVEL
+#define LOG_LEVEL 2
+#endif
+
 #if LOG_LEVEL == 0
 #define LOG_FATAL(msg) platform_dependent_logging(FATAL, msg)
 #define LOG_ERROR(msg) platform_dependent_logging(ERROR, msg)
