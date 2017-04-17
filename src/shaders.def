@@ -48,27 +48,7 @@ static char* __fragment_shader_plane_color = "#version 100\n"
 		"\n"
 		"void main() {\n"
 		"	gl_FragColor = color;\n"
-		"}\n";
-
-static char* __fragment_shader_wlc_cursor = "#version 100\n"
-      "precision mediump float;\n"
-      "uniform sampler2D texture;\n"
-      "varying vec2 v_uv;\n"
-      "\n"
-      "void main() {\n"
-      "  vec4 palette[3];\n"
-      "  palette[0] = vec4(0.0, 0.0, 0.0, 1.0);\n"
-      "  palette[1] = vec4(1.0, 1.0, 1.0, 1.0);\n"
-      "  palette[2] = vec4(0.0, 0.0, 0.0, 0.0);\n"
-      "  gl_FragColor = palette[int(texture2D(texture, v_uv).x * 256.0)];\n"
-      "}\n";
-      
-static char* __fragment_shader_dummy = "#version 100\n"
-      "precision mediump float;\n"
-      "\n"
-      "void main() {\n"
-      "  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
-      "}\n";
+		"}\n";   
       
 static char *__fragment_shader_egl = "#version 100\n"
       "#extension GL_OES_EGL_image_external : require\n"

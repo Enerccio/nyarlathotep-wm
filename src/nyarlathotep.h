@@ -108,7 +108,7 @@ void request_geometry(wlc_handle view, const struct wlc_geometry* geometry);
 void init_render();
 void context_open(wlc_handle output);
 void context_closed(wlc_handle output);
-void custom_render(wlc_handle output);
+bool custom_render(wlc_handle output);
 // render.c ends
 
 #endif /* NYARLATHOTEP_H_ */
