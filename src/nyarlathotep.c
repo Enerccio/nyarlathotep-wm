@@ -15,7 +15,10 @@ void load_config() {
 }
 
 void compositor_ready() {
-	char* wd = get_pinion_workdir();
+	init_platform_compositor();
+	init_launchers(get_launcher_dir());
+
+	char* wd = get_nyarlathotep_workdir();
 	if (current_configuration.execution_script != NULL &&
 			strcmp(current_configuration.execution_script, "") != 0) {
 		LOG_INFO("starting initrc file");
@@ -34,6 +37,7 @@ int main(int argc, char** argv) {
 
 	wlc_log_set_handler(logger_callback);
 
+	init_platform();
 	init_configuration();
 	load_config();
 	init_workspaces();

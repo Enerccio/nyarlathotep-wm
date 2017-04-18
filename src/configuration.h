@@ -17,6 +17,7 @@ typedef struct configuration {
 	const char* shell;
 	const char* workdir;
 	const char* execution_script;
+	const char* lancher_dir;
 
 	const char* default_terminal;
 	const char* background;

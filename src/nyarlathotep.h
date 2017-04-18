@@ -46,12 +46,17 @@ const char* get_open_terminal_command();
 const char* get_background();
 const float* get_window_list_color();
 const float* get_window_list_selection_color();
+const char* get_launcher_dir();
 int get_side_window_height();
 int get_size_window_offset();
 
 bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods);
 bool window_move_to_background_pressed(uint32_t key, struct wlc_modifiers mods);
 // configuration.c ends
+
+// launcher.c
+void init_launchers(const char* from);
+// launcher.c ends
 
 // animator.c
 typedef bool(*animation_request)(void* data);

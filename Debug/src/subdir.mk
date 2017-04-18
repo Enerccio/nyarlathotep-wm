@@ -7,6 +7,7 @@ C_SRCS += \
 ../src/animator.c \
 ../src/configuration.c \
 ../src/keyboard_manager.c \
+../src/launcher.c \
 ../src/mouse_manager.c \
 ../src/nyarlathotep.c \
 ../src/render.c \
@@ -18,6 +19,7 @@ OBJS += \
 ./src/animator.o \
 ./src/configuration.o \
 ./src/keyboard_manager.o \
+./src/launcher.o \
 ./src/mouse_manager.o \
 ./src/nyarlathotep.o \
 ./src/render.o \
@@ -29,6 +31,7 @@ C_DEPS += \
 ./src/animator.d \
 ./src/configuration.d \
 ./src/keyboard_manager.d \
+./src/launcher.d \
 ./src/mouse_manager.d \
 ./src/nyarlathotep.d \
 ./src/render.d \

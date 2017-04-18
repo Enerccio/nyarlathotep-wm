@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../src/libds/aojls.c \
 ../src/libds/array.c \
 ../src/libds/btree.c \
 ../src/libds/funcops.c \
@@ -13,6 +14,7 @@ C_SRCS += \
 ../src/libds/random.c 
 
 OBJS += \
+./src/libds/aojls.o \
 ./src/libds/array.o \
 ./src/libds/btree.o \
 ./src/libds/funcops.o \
@@ -22,6 +24,7 @@ OBJS += \
 ./src/libds/random.o 
 
 C_DEPS += \
+./src/libds/aojls.d \
 ./src/libds/array.d \
 ./src/libds/btree.d \
 ./src/libds/funcops.d \

@@ -1,5 +1,6 @@
 #include "configuration.h"
 #include "nyarlathotep.h"
+#include "platform/platform.h"
 
 configuration_t current_configuration;
 
@@ -25,6 +26,7 @@ void init_configuration() {
 	current_configuration.shell = NULL;
 	current_configuration.workdir = ".nyarla";
 	current_configuration.execution_script = "thotep.rc";
+	current_configuration.lancher_dir = "launchers";
 
 	current_configuration.window_list_color[0] = 1.0;
 	current_configuration.window_list_color[1] = 0.0;
@@ -81,6 +83,7 @@ void load_configuration_from_cfg(config_t* config) {
 	STRING_VALUE_READ(default_terminal, "default_terminal");
 	STRING_VALUE_READ(workdir, "workdir");
 	STRING_VALUE_READ(execution_script, "initrc");
+	STRING_VALUE_READ(lancher_dir, "launcher_dir");
 
 	STRING_VALUE_READ(background, "background");
 	INT_VALUE_READ(window_list_sizes[0], "window_list_window_size");
@@ -126,4 +129,11 @@ int get_side_window_height() {
 
 int get_size_window_offset() {
 	return current_configuration.window_list_sizes[1];
+}
+
+const char* get_launcher_dir() {
+	if (path_is_absolute(current_configuration.lancher_dir)) {
+		return current_configuration.lancher_dir;
+	}
+	return path_concat(get_nyarlathotep_workdir(), current_configuration.lancher_dir);
 }
