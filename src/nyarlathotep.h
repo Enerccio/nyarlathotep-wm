@@ -88,6 +88,8 @@ void workspace_view_got_focus(workspace_t* workspace,
 		wlc_handle view);
 void workspace_maximize_request(workspace_t* workspace,
 		wlc_handle view, bool change);
+bool workspace_minimize_request(workspace_t* workspace,
+		wlc_handle view, bool change);
 
 bool workspace_handle_key_input(workspace_t* workspace,
 		wlc_handle view, uint32_t time,
@@ -107,6 +109,7 @@ void view_focus_change(wlc_handle view, bool focus);
 void view_destroyed(wlc_handle view);
 void state_change(wlc_handle view, enum wlc_view_state_bit state, bool change);
 void request_geometry(wlc_handle view, const struct wlc_geometry* geometry);
+bool minimize_request(wlc_handle view, bool minimize);
 // windows.c ends
 
 // render.c

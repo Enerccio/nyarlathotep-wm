@@ -162,3 +162,10 @@ void request_geometry(wlc_handle view, const struct wlc_geometry* geometry) {
 		handle_float_view_geometry(workspace, view, &g);
 	}
 }
+
+bool minimize_request(wlc_handle view, bool minimize) {
+	workspace_t* workspace = get_workspace_for_view(view);
+	if (workspace == NULL)
+		return true;
+	return workspace_minimize_request(workspace, view, minimize);
+}

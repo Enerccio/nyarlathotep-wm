@@ -335,6 +335,14 @@ void handle_float_view_geometry(workspace_t* workspace, wlc_handle view,
 	wlc_view_set_geometry(view, 0, &g);
 }
 
+bool workspace_minimize_request(workspace_t* workspace,
+		wlc_handle view, bool minimize) {
+	if (minimize && view == workspace->main_view) {
+		move_view_to_background(workspace);
+	} // TODO: floating windows
+	return false;
+}
+
 /**
  * Handles all key inputs related to workspace
  */
