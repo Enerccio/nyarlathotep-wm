@@ -135,6 +135,10 @@ void workspace_view_destroyed(workspace_t* workspace,
 	} else {
 		list_remove((void*)view, workspace->floating_windows);
 		list_remove((void*)view, workspace->hidden_windows);
+		if (is_parent_view(workspace->main_view, view)) {
+			wlc_handle parent = wlc_view_get_parent(view);
+			wlc_view_focus(parent);
+		}
 		// TODO: pinned
 	}
 	wlc_output_schedule_render(workspace->output);

@@ -1,6 +1,8 @@
 #include "utils.h"
 
 bool is_parent_view(wlc_handle p, wlc_handle view) {
+	if (p == 0 || view == 0)
+		return false;
 	wlc_handle parent = wlc_view_get_parent(view);
 	if (parent == 0)
 		return false;
