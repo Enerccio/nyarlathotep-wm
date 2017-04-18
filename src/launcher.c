@@ -1,5 +1,24 @@
 #include "launcher.h"
 
+/*
+ {
+	"name": "gnome-editor",
+	"caregory" : ["Editors"],
+	"display-name": "GEdit",
+	"launcher": {
+		"program": "/usr/bin/gedit",
+		"arguments": []
+	},
+	"keys": {
+		"mods": 12,
+		"key": 101
+	},
+	"display": {
+		"hidden": true
+	}
+ }
+ */
+
 list_t* launchers;
 
 static launcher_t* create_launcher(const char* launcher_file) {
