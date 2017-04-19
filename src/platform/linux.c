@@ -12,6 +12,10 @@
 #include <dirent.h>
 #include <sys/inotify.h>
 #include <limits.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <nwm/nwm-api.h>
 
 #ifdef journal_d
 #include <syslog.h>
@@ -76,6 +80,10 @@ bool directory_exists(const char* dirpath) {
 	} else {
 		return false;
 	}
+}
+
+bool file_exists(const char* file) {
+	return access(file, F_OK) != -1;
 }
 
 void get_directory_content(const char* directory, list_t* result) {
@@ -284,6 +292,20 @@ void unregister_notifier_callback_data(const char* path, void(callback)(struct n
 			list_remove_it(&it);
 		}
 	}
+}
+
+int open_communication_channel(uint32_t channel_id) {
+	char* pipe_name = nwm_generate_pipe_name(channel_id);
+	if (!file_exists(pipe_name)) {
+		umask(0);
+		if (mknod(pipe_name, S_IFIFO|0666, 0)) {
+			free(pipe_name);
+			GENERAL_FAILURE("failed to create communication channel pipe");
+		}
+	}
+	int pipefd = open(pipe_name, O_NONBLOCK | O_RDWR);
+	free(pipe_name);
+	return pipefd;
 }
 
 #endif

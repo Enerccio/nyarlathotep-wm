@@ -15,6 +15,7 @@ void load_config() {
 }
 
 void compositor_ready() {
+	init_communication();
 	init_platform_compositor();
 	init_launchers(get_launcher_dir());
 

@@ -14,6 +14,7 @@ void platform_dependent_logging(enum logging_type, const char* message);
 char* path_concat(const char* path, const char* element);
 bool path_is_absolute(const char* path);
 bool directory_exists(const char* dirpath);
+bool file_exists(const char* file);
 char* get_nyarlathotep_workdir();
 const char* get_default_shell();
 void get_directory_content(const char* directory, list_t* result);
@@ -34,5 +35,7 @@ void register_notifier(const char* path, void(callback)(const struct notify_even
 void unregister_notifier(const char* path);
 void unregister_notifier_callback(const char* path, void(callback)(struct notify_event event));
 void unregister_notifier_callback_data(const char* path, void(callback)(struct notify_event event), void* data);
+
+int open_communication_channel(uint32_t channel_id);
 
 #endif /* PLATFORM_H_ */
