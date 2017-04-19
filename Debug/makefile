@@ -26,7 +26,10 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: nwm
+all: pre-build main-build
+
+# Main-build Target
+main-build: nwm
 
 # Tool invocations
 nwm: $(OBJS) $(USER_OBJS)
@@ -41,7 +44,12 @@ clean:
 	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) nwm
 	-@echo ' '
 
+pre-build:
+	-@echo 'make all protocols'
+	-cd ../protocols; make all
+	-@echo ' '
+
 .PHONY: all clean dependents
-.SECONDARY:
+.SECONDARY: main-build pre-build
 
 -include ../makefile.targets
