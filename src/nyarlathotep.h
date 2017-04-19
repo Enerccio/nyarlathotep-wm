@@ -63,10 +63,6 @@ typedef bool(*animation_request)(void* data);
 void register_animation(animation_request request, void* data, int delay);
 // animator.c ends
 
-// communication.c
-void init_communication();
-// communication.c ends
-
 // workspace.c
 void init_workspaces();
 

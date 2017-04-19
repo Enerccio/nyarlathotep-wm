@@ -36,6 +36,4 @@ void unregister_notifier(const char* path);
 void unregister_notifier_callback(const char* path, void(callback)(struct notify_event event));
 void unregister_notifier_callback_data(const char* path, void(callback)(struct notify_event event), void* data);
 
-int open_communication_channel(uint32_t channel_id);
-
 #endif /* PLATFORM_H_ */
