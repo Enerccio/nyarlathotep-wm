@@ -135,17 +135,18 @@ int convert_log_type(enum logging_type ltype) {
 }
 #endif
 
-void platform_dependent_logging(enum logging_type ltype, const char* message) {
+void platform_dependent_logging(enum logging_type ltype, const char* message, const char* placement) {
 	const char* type = logging_type_str(ltype);
 
+	char buffer[4096];
+	sprintf(buffer, "%s[%s]: %s", placement, type, message);
+
 #ifdef journal_d
-	syslog(convert_log_type(ltype), message);
+	syslog(convert_log_type(ltype), buffer);
 #endif
 
 	// sys err logging
-	fprintf(stderr, type);
-	fprintf(stderr, ": ");
-	fprintf(stderr, message);
+	fprintf(stderr, buffer);
 	fprintf(stderr, "\n");
 }
 

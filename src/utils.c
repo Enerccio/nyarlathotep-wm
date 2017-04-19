@@ -38,15 +38,15 @@ const char* logging_type_str(enum logging_type type) {
 
 void logger_callback(enum wlc_log_type type, const char *str) {
 	if (type == WLC_LOG_INFO)
-		LOG_INFO(str);
+		platform_dependent_logging(INFO, str, "<wlc-message>");
 	else if (type == WLC_LOG_WARN)
-		LOG_WARN(str);
+		platform_dependent_logging(WARN, str, "<wlc-message>");
 	else if (type == WLC_LOG_ERROR)
-		LOG_ERROR(str);
+		platform_dependent_logging(ERROR, str, "<wlc-message>");
 	else if (type == WLC_LOG_WAYLAND)
-		LOG_INFO(str);
+		platform_dependent_logging(INFO, str, "<wlc-message>");
 	else {
-		LOG_DEBUG(str);
+		platform_dependent_logging(DEBUG, str, "<wlc-message>");
 	}
 }
 

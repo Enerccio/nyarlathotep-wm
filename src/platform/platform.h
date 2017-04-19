@@ -10,7 +10,7 @@
 void init_platform();
 void init_platform_compositor();
 
-void platform_dependent_logging(enum logging_type, const char* message);
+void platform_dependent_logging(enum logging_type, const char* message, const char* placement);
 char* path_concat(const char* path, const char* element);
 bool path_is_absolute(const char* path);
 bool directory_exists(const char* dirpath);

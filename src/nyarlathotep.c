@@ -2,6 +2,7 @@
 
 #include "configuration.h"
 #include "platform/platform.h"
+#include "protocol/protocol.h"
 
 void load_config() {
 	// TODO: arguments
@@ -68,6 +69,8 @@ int main(int argc, char** argv) {
 
 	if (!wlc_init())
 		return EXIT_FAILURE;
+
+	register_desktop_shell_extension();
 
 	LOG_INFO("starting wlc event loop");
 	wlc_run();
