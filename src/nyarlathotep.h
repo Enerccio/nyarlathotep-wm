@@ -15,6 +15,7 @@
 #include "macros.h"
 
 typedef struct workspace workspace_t;
+typedef struct launcher launcher_t;
 
 // log.c
 void logger_callback(enum wlc_log_type type, const char *str);
@@ -42,7 +43,6 @@ void init_configuration();
 
 const char* get_cursor_image();
 const int* get_cursor_offset();
-const char* get_open_terminal_command();
 const char* get_background();
 const float* get_window_list_color();
 const float* get_window_list_selection_color();
@@ -50,12 +50,13 @@ const char* get_launcher_dir();
 int get_side_window_height();
 int get_size_window_offset();
 
-bool open_terminal_pressed(uint32_t key, struct wlc_modifiers mods);
 bool window_move_to_background_pressed(uint32_t key, struct wlc_modifiers mods);
 // configuration.c ends
 
 // launcher.c
 void init_launchers(const char* from);
+bool launcher_execute_key_pressed(uint32_t key, struct wlc_modifiers mods);
+bool launch_launcher(launcher_t* launcher);
 // launcher.c ends
 
 // animator.c

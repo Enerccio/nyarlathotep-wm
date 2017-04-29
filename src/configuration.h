@@ -11,7 +11,6 @@ typedef struct configuration {
 	int32_t cursor_offset[2];
 
 	uint32_t control_key_modifiers;
-	uint32_t open_terminal_key;
 	uint32_t move_window_to_background;
 
 	const char* shell;

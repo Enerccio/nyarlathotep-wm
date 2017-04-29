@@ -353,22 +353,15 @@ bool workspace_handle_key_input(workspace_t* workspace,
 
 	uint32_t symkey = wlc_keyboard_get_keysym_for_key(key, mods);
 
-	if (open_terminal_pressed(symkey, *mods)) {
-		if (state == WLC_KEY_STATE_PRESSED) {
-			const char* terminal = get_open_terminal_command();
-			const char* args[2];
-			args[0] = terminal;
-			args[1] = NULL;
-			wlc_exec(terminal, (char * const*)&args);
-		}
-		return true;
-	}
-
 	if (window_move_to_background_pressed(symkey, *mods)) {
 		if (state == WLC_KEY_STATE_PRESSED) {
 			move_view_to_background(workspace);
 		}
 		return true;
+	}
+
+	if (state == WLC_KEY_STATE_PRESSED) {
+		return launcher_execute_key_pressed(key, *mods);
 	}
 
 	return false;
