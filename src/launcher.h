@@ -1,3 +1,6 @@
+#ifndef LAUNCHER_H
+#define LAUNCHER_H
+
 #include "nyarlathotep.h"
 #include "platform/platform.h"
 #include "libds/aojls.h"
@@ -25,3 +28,5 @@ typedef struct launcher {
 		uint32_t key;
 	} launch_configuration;
 } launcher_t;
+
+#endif /*LAUNCHER_H*/

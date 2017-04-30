@@ -4,6 +4,10 @@
 #include <wlc/wlc.h>
 #include "macros.h"
 
+struct rgb_color {
+	float r, g, b;
+};
+
 const char* logging_type_str(enum logging_type type);
 
 bool is_parent_view(wlc_handle p, wlc_handle view);

@@ -11,6 +11,7 @@ C_SRCS += \
 ../src/mouse_manager.c \
 ../src/nyarlathotep.c \
 ../src/render.c \
+../src/theme.c \
 ../src/utils.c \
 ../src/windows.c \
 ../src/workspace.c 
@@ -23,6 +24,7 @@ OBJS += \
 ./src/mouse_manager.o \
 ./src/nyarlathotep.o \
 ./src/render.o \
+./src/theme.o \
 ./src/utils.o \
 ./src/windows.o \
 ./src/workspace.o 
@@ -35,6 +37,7 @@ C_DEPS += \
 ./src/mouse_manager.d \
 ./src/nyarlathotep.d \
 ./src/render.d \
+./src/theme.d \
 ./src/utils.d \
 ./src/windows.d \
 ./src/workspace.d 

@@ -25,28 +25,10 @@ void init_configuration() {
 	current_configuration.workdir = ".nyarla";
 	current_configuration.execution_script = "thotep.rc";
 	current_configuration.lancher_dir = "launchers";
-
-	current_configuration.window_list_color[0] = 1.0;
-	current_configuration.window_list_color[1] = 0.0;
-	current_configuration.window_list_color[2] = 0.0;
-	current_configuration.window_list_color[3] = 1.0;
-
-	current_configuration.window_list_selection_color[0] = 0.0;
-	current_configuration.window_list_selection_color[1] = 1.0;
-	current_configuration.window_list_selection_color[2] = 0.0;
-	current_configuration.window_list_selection_color[3] = 1.0;
-
-	current_configuration.window_list_sizes[0] = 100;
-	current_configuration.window_list_sizes[1] = current_configuration.window_list_sizes[0] + 30;
+	current_configuration.theme = "default.theme";
 }
 
-static char* copy_string(const char* string) {
-	char* dest = malloc(sizeof(char)*(strlen(string)+1));
-	ASSERT_MEM(dest);
-	strcpy(dest, string);
-	return dest;
-}
-
+/*
 static int copy_int(int i) {
 	return i;
 }
@@ -54,6 +36,7 @@ static int copy_int(int i) {
 static float copy_float(float f) {
 	return f;
 }
+*/
 
 #define VALUE_READ(config, read_op, copy_op, where, type, path ) do { \
 	type v;\
@@ -84,7 +67,6 @@ void load_configuration_from_cfg(config_t* config) {
 	STRING_VALUE_READ(lancher_dir, "launcher_dir");
 
 	STRING_VALUE_READ(background, "background");
-	INT_VALUE_READ(window_list_sizes[0], "window_list_window_size");
 }
 
 const char* get_cursor_image() {
@@ -103,25 +85,13 @@ const char* get_background() {
 	return current_configuration.background;
 }
 
-const float* get_window_list_color() {
-	return current_configuration.window_list_color;
-}
-
-const float* get_window_list_selection_color() {
-	return current_configuration.window_list_selection_color;
+const char* get_active_theme() {
+	return path_concat(path_concat(get_nyarlathotep_workdir(), "themes"), current_configuration.theme);
 }
 
 bool window_move_to_background_pressed(uint32_t key, struct wlc_modifiers mods) {
 	return key == current_configuration.move_window_to_background &&
 				mods.mods == current_configuration.control_key_modifiers;
-}
-
-int get_side_window_height() {
-	return current_configuration.window_list_sizes[0];
-}
-
-int get_size_window_offset() {
-	return current_configuration.window_list_sizes[1];
 }
 
 const char* get_launcher_dir() {

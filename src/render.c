@@ -470,14 +470,14 @@ bool custom_render(wlc_handle output) {
 	}
 
 	if (workspace->window_list_show_width > 0) {
-		const float* window_list_color = get_window_list_color();
-		const float* window_list_sel_color = get_window_list_selection_color();
+		struct rgb_color window_list_color = get_window_list_color();
+		struct rgb_color window_list_sel_color = get_window_list_selection_color();
 
 		render_rectangle_color(output, workspace->plane_color_shader,
 				workspace->w - workspace->window_list_show_width, 0,
 				workspace->window_list_show_width, workspace->h,
-				window_list_color[0], window_list_color[1],
-				window_list_color[2], window_list_color[3]);
+				window_list_color.r, window_list_color.g,
+				window_list_color.b, 1.0);
 
 		int win_width = workspace->window_list_total_width * 0.8f;
 		int total_win_size = get_side_window_height() + get_size_window_offset();
@@ -512,8 +512,8 @@ bool custom_render(wlc_handle output) {
 				render_rectangle_color(output, workspace->plane_color_shader,
 								wlx - RENDER_SELECTED_WINDOW_LIST_OFFSET, wly - RENDER_SELECTED_WINDOW_LIST_OFFSET,
 								win_width + (2*RENDER_SELECTED_WINDOW_LIST_OFFSET), get_side_window_height() + (2*RENDER_SELECTED_WINDOW_LIST_OFFSET),
-								window_list_sel_color[0], window_list_sel_color[1],
-								window_list_sel_color[2], window_list_sel_color[3]);
+								window_list_sel_color.r, window_list_sel_color.g,
+								window_list_sel_color.b, 1.0);
 			}
 
 			render_rectangle(output, texture, workspace->render_mode_shaders[fmt], wlx,

@@ -13,6 +13,7 @@
 #include <wayland-server.h>
 
 #include "macros.h"
+#include "utils.h"
 
 typedef struct workspace workspace_t;
 typedef struct launcher launcher_t;
@@ -44,11 +45,8 @@ void init_configuration();
 const char* get_cursor_image();
 const int* get_cursor_offset();
 const char* get_background();
-const float* get_window_list_color();
-const float* get_window_list_selection_color();
 const char* get_launcher_dir();
-int get_side_window_height();
-int get_size_window_offset();
+const char* get_active_theme();
 
 bool window_move_to_background_pressed(uint32_t key, struct wlc_modifiers mods);
 // configuration.c ends
@@ -58,6 +56,14 @@ void init_launchers(const char* from);
 bool launcher_execute_key_pressed(uint32_t key, struct wlc_modifiers mods);
 bool launch_launcher(launcher_t* launcher);
 // launcher.c ends
+
+// theme.c
+void set_active_theme(const char* file);
+struct rgb_color get_window_list_color();
+struct rgb_color get_window_list_selection_color();
+int get_side_window_height();
+int get_size_window_offset();
+// theme.c ends
 
 // animator.c
 typedef bool(*animation_request)(void* data);

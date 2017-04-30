@@ -19,6 +19,8 @@ void compositor_ready() {
 	init_platform_compositor();
 	init_launchers(get_launcher_dir());
 
+	set_active_theme(get_active_theme());
+
 	char* wd = get_nyarlathotep_workdir();
 	if (current_configuration.execution_script != NULL &&
 			strcmp(current_configuration.execution_script, "") != 0) {

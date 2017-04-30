@@ -20,10 +20,7 @@ typedef struct configuration {
 
 	const char* default_terminal;
 	const char* background;
-
-	float window_list_color[4];
-	float window_list_selection_color[4];
-	int window_list_sizes[2];
+	const char* theme;
 } configuration_t;
 
 extern configuration_t current_configuration;
