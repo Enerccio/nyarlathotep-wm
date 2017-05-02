@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="decorators">
+
+	<interface name="decorator" version="1">
+		<description summary="Decorator protocol for undecorated windows">
+			Provides a standardized way for nyarlathotep to draw decorators around x windows which 
+			do not have decorators
+		</description>
+		
+		<request name="set_decorator">
+			<description summary="assigns this process as decorator">
+				This process requests that it will be handling all undecorated windows by providing decorating surfaces.
+			</description>
+		</request>
+		
+		<event name="decorator_already_present">
+			<description summary="another decorator is already running">
+				Another decorator is already running.
+			</description>
+			<arg name="pid" type="uint"/>
+		</event>
+		
+		<request name="set_decorator_surface">
+			<description summary="this designated surface is decorater over view with handle 'handle'">
+				This designated surface is decorater over view with handle 'handle'
+			</description>
+			<arg name="handle" type="uint"/>
+			<arg name="surface" type="object" interface="wl_surface"/>
+		</request>
+		
+		<request name="decoratee_closed_requested">
+			<description summary="close button clicked">
+				User clicked on close button
+			</description>
+			<arg name="handle" type="uint"/>
+		</request>
+		
+		<request name="decoratee_minimize_requested">
+			<description summary="minimize button clicked">
+				User clicked on minimize button
+			</description>
+			<arg name="handle" type="uint"/>
+		</request>
+		
+		<request name="decoratee_maximize_requested">
+			<description summary="maximize button clicked">
+				User clicked on maximize button
+			</description>
+			<arg name="handle" type="uint"/>
+		</request>
+		
+		<request name="decoratee_set_geometry">
+			<description summary="decoratee surface should have this position and size">
+				Informs server that decoratee surface should have this position and size.
+			</description>
+			<arg name="handle" type="uint"/>
+			<arg name="x" type="uint"/>
+			<arg name="y" type="uint"/>
+			<arg name="width" type="uint"/>
+			<arg name="height" type="uint"/>
+		</request>	
+		
+		<event name="undecorated_view_created">
+			<description summary="called when view with no internal decorator is created">
+				Called when view with no internal decorator is created
+			</description>
+			<arg name="handle" type="uint" />
+			<arg name="title" type="string" />
+			<arg name="decoratee_state" type="uint" />
+		</event>
+		
+		<event name="decoratee_state_changed">
+			<arg name="handle" type="uint"/>
+			<arg name="decoratee_state" type="uint"/>
+		</event>
+		
+		<event name="decoratee_title_changed">
+			<arg name="handle" type="uint"/>
+			<arg name="title" type="string"/>
+		</event>
+		
+		<event name="decoratee_destroyed">
+			<arg name="handle" type="uint"/>
+		</event>
+		
+		<enum name="decoratee_state">
+			<entry name="resizeable" value="2"/>
+			<entry name="closeable" value="4"/>
+			<entry name="maximizable" value="8"/>
+			<entry name="minimizable" value="16"/>
+			<entry name="titleable" value="32"/>
+			<entry name="moveable" value="64"/>
+		</enum>
+		
+	</interface>
+
+</protocol>

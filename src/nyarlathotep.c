@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 	if (!wlc_init())
 		return EXIT_FAILURE;
 
-	register_desktop_shell_extension();
+	register_decorator_extension();
 
 	LOG_INFO("starting wlc event loop");
 	wlc_run();

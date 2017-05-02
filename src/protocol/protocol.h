@@ -3,6 +3,6 @@
 
 #include <wayland-server-core.h>
 
-void register_desktop_shell_extension();
+void register_decorator_extension();
 
 #endif /* PROTOCOL_H_ */

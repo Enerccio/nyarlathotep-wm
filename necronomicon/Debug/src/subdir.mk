@@ -4,20 +4,29 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/protocol/decorator.c 
+../src/decoration.c \
+../src/necronomicon.c \
+../src/registry.c \
+../src/render.c 
 
 OBJS += \
-./src/protocol/decorator.o 
+./src/decoration.o \
+./src/necronomicon.o \
+./src/registry.o \
+./src/render.o 
 
 C_DEPS += \
-./src/protocol/decorator.d 
+./src/decoration.d \
+./src/necronomicon.d \
+./src/registry.d \
+./src/render.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/protocol/%.o: ../src/protocol/%.c
+src/%.o: ../src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -Djournal_d -DLOG_LEVEL=1 -I/usr2/fast/projects/pinion/xwlc/wlc/include -I"/src/school/nwm/nyarlathotep-wm/include" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	gcc -I"/src/school/nwm/nyarlathotep-wm/include" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

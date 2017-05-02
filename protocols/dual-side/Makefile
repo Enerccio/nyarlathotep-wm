@@ -11,5 +11,9 @@ PROTOCOL_CODE := $(PROTOCOL_SOURCES:.xml=.inc)
 %.inc: %.xml
 	wayland-scanner code $< ../../generated/includes/$@ 
 	
+decorators.inc : decorators.xml
+	wayland-scanner code $< ../../necronomicon/src/$@
+	wayland-scanner code $< ../../generated/includes/$@ 
+	
 all: $(PROTOCOL_HEADERS) $(PROTOCOL_CODE)
 	

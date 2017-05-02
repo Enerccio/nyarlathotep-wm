@@ -6,6 +6,7 @@
 C_SRCS += \
 ../src/animator.c \
 ../src/configuration.c \
+../src/decorator.c \
 ../src/keyboard_manager.c \
 ../src/launcher.c \
 ../src/mouse_manager.c \
@@ -19,6 +20,7 @@ C_SRCS += \
 OBJS += \
 ./src/animator.o \
 ./src/configuration.o \
+./src/decorator.o \
 ./src/keyboard_manager.o \
 ./src/launcher.o \
 ./src/mouse_manager.o \
@@ -32,6 +34,7 @@ OBJS += \
 C_DEPS += \
 ./src/animator.d \
 ./src/configuration.d \
+./src/decorator.d \
 ./src/keyboard_manager.d \
 ./src/launcher.d \
 ./src/mouse_manager.d \
@@ -47,7 +50,7 @@ C_DEPS += \
 src/%.o: ../src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -Djournal_d -DLOG_LEVEL=1 -I/usr2/fast/projects/pinion/xwlc/wlc/include -I"/usr2/fast/projects/pinion/nyarlathotep-wm/include" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	gcc -Djournal_d -DLOG_LEVEL=1 -I/usr2/fast/projects/pinion/xwlc/wlc/include -I"/src/school/nwm/nyarlathotep-wm/include" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

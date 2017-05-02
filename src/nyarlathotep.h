@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 #include <wlc/wlc.h>
-#include <wayland-server.h>
+#include <wlc/wlc-wayland.h>
 
 #include "macros.h"
 #include "utils.h"
@@ -125,5 +125,10 @@ void context_open(wlc_handle output);
 void context_closed(wlc_handle output);
 bool custom_render(wlc_handle output);
 // render.c ends
+
+// decorator.c
+uint32_t register_decorator(struct wl_client* client, struct wl_resource* connection);
+void unregister_decorator(struct wl_resource* connection);
+// decorator.c ends
 
 #endif /* NYARLATHOTEP_H_ */
