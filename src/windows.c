@@ -44,7 +44,7 @@ void state_change(wlc_handle view, enum wlc_view_state_bit state, bool change) {
 	}
 }
 
-static void print_debug_anchor(enum wlc_positioner_anchor_bit abit) {
+void print_debug_anchor(enum wlc_positioner_anchor_bit abit) {
 	if (abit == WLC_BIT_ANCHOR_NONE) {
 		printf("NONE ");
 	} else {
@@ -65,7 +65,7 @@ static void print_debug_anchor(enum wlc_positioner_anchor_bit abit) {
 	printf("\n");
 }
 
-static void print_debug_gravity(enum wlc_positioner_gravity_bit gravity) {
+void print_debug_gravity(enum wlc_positioner_gravity_bit gravity) {
 	if (gravity == WLC_BIT_GRAVITY_NONE) {
 		printf("NONE ");
 	} else {
@@ -85,7 +85,7 @@ static void print_debug_gravity(enum wlc_positioner_gravity_bit gravity) {
 	printf("\n");
 }
 
-static void print_debug_adjustment(enum wlc_positioner_constraint_adjustment_bit adj) {
+void print_debug_adjustment(enum wlc_positioner_constraint_adjustment_bit adj) {
 	if (adj == WLC_BIT_CONSTRAINT_ADJUSTMENT_NONE) {
 		printf("NONE ");
 	} else {
@@ -326,6 +326,7 @@ static void set_positioner_geometry(wlc_handle view, struct wlc_geometry* result
 	wlc_handle parent = wlc_view_get_parent(view);
 	struct wlc_geometry* pgeometry = (struct wlc_geometry*)wlc_view_get_geometry(parent);
 
+#if (0) // debug info
 	printf("\n");
 	printf("positioner info for view %d\n", (int)view);
 	if (anchor)
@@ -341,6 +342,7 @@ static void set_positioner_geometry(wlc_handle view, struct wlc_geometry* result
 	printf("\n");
 
 	fflush(stdout);
+#endif
 
 	struct positioner p;
 	p.size = size_req;
