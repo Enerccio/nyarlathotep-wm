@@ -32,7 +32,7 @@
 									<listOptionValue builtIn="false" value="LOG_LEVEL=1"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.779511126" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="/usr2/fast/projects/pinion/xwlc/wlc/include"/>
+									<listOptionValue builtIn="false" value="/usr2/fast/WLC/wlc-experimental/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1093538435" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
@@ -46,7 +46,7 @@
 									<listOptionValue builtIn="false" value="m"/>
 								</option>
 								<option id="gnu.c.link.option.paths.1182737483" name="Library search path (-L)" superClass="gnu.c.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
-									<listOptionValue builtIn="false" value="/usr2/fast/projects/pinion/xwlc/wlc/target/src"/>
+									<listOptionValue builtIn="false" value="/usr2/fast/WLC/wlc-experimental/target/src"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1758495028" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

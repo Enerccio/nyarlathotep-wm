@@ -36,7 +36,7 @@ main-build: nwm
 nwm: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L/usr2/fast/projects/pinion/xwlc/wlc/target/src -o "nwm" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L/usr2/fast/WLC/wlc-experimental/target/src -o "nwm" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
