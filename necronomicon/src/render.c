@@ -7,7 +7,10 @@
 
 struct wl_shm_pool;
 
-#define BYTES_PER_PIXEL (2) // RGBA
+int bps;
+int cairo_fmt, shm_fmt;
+int shift_offset, len_offset;
+bool has_format;
 
 struct shm_buffer {
 	char buffer_file[256];
@@ -73,7 +76,7 @@ static void create_shm_buffer(uint32_t handle, struct shm_buffer* b, int w, int 
 	if (b->buffer_fd < 0)
 		ERROR("failed to create shm buffer file (max open fd?)");
 
-	b->buffer_size = w * h * BYTES_PER_PIXEL;
+	b->buffer_size = (w * h * bps) + len_offset; // len_offset used when shifting for cairo bits
 
 	if (ftruncate(b->buffer_fd, b->buffer_size) < 0)
 		ERROR("failed to truncate shm file");
@@ -86,10 +89,30 @@ static void create_shm_buffer(uint32_t handle, struct shm_buffer* b, int w, int 
 	unlink(b->buffer_file);
 
 	b->pool = wl_shm_create_pool(shm, b->buffer_fd, b->buffer_size);
-	b->buffer = wl_shm_pool_create_buffer(b->pool, 0, w, h, w*BYTES_PER_PIXEL, WL_SHM_FORMAT_RGB565);
+	b->buffer = wl_shm_pool_create_buffer(b->pool, 0, w, h, w*bps, shm_fmt);
+}
+
+void valid_format(void *data, struct wl_shm *wl_shm, uint32_t format) {
+	if (!has_format) {
+		if (format == WL_SHM_FORMAT_ARGB8888) {
+			cairo_fmt = CAIRO_FORMAT_ARGB32;
+			shm_fmt = WL_SHM_FORMAT_ARGB8888;
+			bps = 4;
+			shift_offset = 0;
+			len_offset = 0;
+			has_format = true;
+		}
+	}
 }
 
 void init_render() {
+	bps = 3;
+	cairo_fmt = CAIRO_FORMAT_RGB24;
+	shm_fmt = WL_SHM_FORMAT_RGB888;
+	shift_offset = 0;
+	len_offset = 0;
+	has_format = false;
+
 	urandom_fd = open("/dev/urandom", O_RDONLY);
 	if (urandom_fd < 0) {
 		ERROR("failed to open urandom");
@@ -212,8 +235,9 @@ static void draw_header(struct decoration* decoration, cairo_t* cr) {
 void draw_decoration(struct decoration* decoration) {
 	decoration->need_redraw = true;
 
-	cairo_surface_t* srfc = cairo_image_surface_create_for_data(decoration->context->buffer.bytes, CAIRO_FORMAT_RGB16_565,
-			decoration->width, decoration->height, decoration->width * BYTES_PER_PIXEL);
+	cairo_surface_t* srfc = cairo_image_surface_create_for_data(decoration->context->buffer.bytes + shift_offset,
+			cairo_fmt,
+			decoration->width, decoration->height, decoration->width * bps);
 	cairo_t* cr = cairo_create(srfc);
 
 	cairo_set_source_rgb (cr, 0, 0, 0);
@@ -233,6 +257,7 @@ void swap_buffers_decoration(struct decoration* decoration) {
 
 		wl_surface_attach(decoration->surface, buffer->buffer, 0, 0);
 		wl_surface_damage(decoration->surface, 0, 0, decoration->width, decoration->height);
+		wl_surface_commit(decoration->surface);
 	}
 	decoration->need_redraw = false;
 }

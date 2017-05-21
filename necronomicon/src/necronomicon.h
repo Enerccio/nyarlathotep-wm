@@ -79,11 +79,12 @@ void register_decoration(struct decoration* decoration);
 void remove_decoration(uint32_t handle);
 void for_all(void (*func)(struct decoration* decoration));
 
-// decoration.c
+// decoration.c;
 struct decoration* create_decoration(uint32_t handle, enum decorator_decoratee_state state, const char* title);
 void destroy_decoration(struct decoration* decoration);
 
 // render.c
+void valid_format(void *data, struct wl_shm *wl_shm, uint32_t format);
 void init_render();
 void destroy_render();
 void init_decoration(struct decoration* decoration);

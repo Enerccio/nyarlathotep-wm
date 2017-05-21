@@ -17,8 +17,8 @@ static void set_decorator (struct wl_client* client, struct wl_resource* resourc
 		decorator_send_decorator_already_present(resource, pid);
 	} else {
 		// TODO: remove, only for test
-		decorator_send_undecorated_view_created(resource, 0, "Hello,  world!", DECORATOR_DECORATEE_STATE_CLOSEABLE
-				| DECORATOR_DECORATEE_STATE_MAXIMIZABLE | DECORATOR_DECORATEE_STATE_MINIMIZABLE);
+//		decorator_send_undecorated_view_created(resource, 0, "Hello,  world!", DECORATOR_DECORATEE_STATE_CLOSEABLE
+//				| DECORATOR_DECORATEE_STATE_MAXIMIZABLE | DECORATOR_DECORATEE_STATE_MINIMIZABLE);
 	}
 }
 

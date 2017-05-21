@@ -13,6 +13,17 @@ struct wl_shm* shm;
 
 uint32_t decorator_pid = 0;
 
+static void find_valid_format(void *data,
+	       struct wl_shm *wl_shm,
+	       uint32_t format) {
+	valid_format(data, wl_shm, format);
+}
+
+static struct wl_shm_listener shm_implementation = {
+		.format = find_valid_format
+};
+
+
 static void global_registry_handler(void* data, struct wl_registry* registry,
 		uint32_t id, const char *interface, uint32_t version) {
 	printf("Got a registry event for %s id %d\n", interface, id);
@@ -32,6 +43,7 @@ static void global_registry_handler(void* data, struct wl_registry* registry,
 	if (strcmp(interface, "wl_shm") == 0) {
 		shm = wl_registry_bind(registry, id,
 										 &wl_shm_interface, 1);
+		wl_shm_add_listener(shm, &shm_implementation, NULL);
 	}
 }
 

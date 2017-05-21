@@ -39,7 +39,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.994554370" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
 								<option id="gnu.c.link.option.libs.418299133" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
-									<listOptionValue builtIn="false" value="wlc"/>
+									<listOptionValue builtIn="false" value="ewlc"/>
 									<listOptionValue builtIn="false" value="wayland-server"/>
 									<listOptionValue builtIn="false" value="config"/>
 									<listOptionValue builtIn="false" value="GLESv2"/>
