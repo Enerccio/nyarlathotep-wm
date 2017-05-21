@@ -264,6 +264,8 @@ static bool apply_positioner_slide(struct wlc_geometry* result, struct wlc_geome
 
 static void apply_positioner(struct wlc_geometry* result, struct wlc_geometry* parent,
 		struct positioner* p) {
+	if (!(p->anchor && p->offset))
+		return;
 
 	struct wlc_geometry copypos = *result;
 
