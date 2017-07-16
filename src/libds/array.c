@@ -61,15 +61,22 @@ array_t* create_array_spec(uint32_t starting_elementa_size) {
  *
  * This is O(1) operation most of the time, unless array has to resize, then it
  * is O(n) operation. data is always placed as last element.
+ *
+ * returns size of the array, which should be previous size + 1 if push was
+ * successful or previous size on failure
  ********************************************************************************/
 uint32_t array_push_data(array_t* array, void* data) {
     if (array->size == array->data_size/sizeof(void*)) {
-        array->data = (void**) realloc(array->data, array->data_size + (array->starting_size * sizeof(void*)));
+    	void** new_backing_array = (void**) realloc(array->data, array->data_size + (array->starting_size * sizeof(void*)));
+    	if (new_backing_array == NULL) {
+    		return array->size;
+    	}
+    	array->data = new_backing_array;
         array->data_size += array->starting_size * sizeof(void*);
     }
 
     array->data[array->size++] = data;
-    return array->size-1;
+    return array->size;
 }
 
 /******************************************************************************//**
@@ -90,22 +97,25 @@ int32_t array_find_data(array_t* array, void* data) {
  *
  * This operation is O(n) at worst case due to shifting. If n == size of array-1,
  * then this operation is same as array_push_data.
+ *
+ * returns true on insert failure, false otherwise
  ********************************************************************************/
-void array_insert_at(array_t* array, uint32_t position, void* data) {
+bool array_insert_at(array_t* array, uint32_t position, void* data) {
+	uint32_t csize = array->size;
     if (position == array->size-1) {
         array_push_data(array, data);
-        return;
+        return csize == array->size;
     }
 
     if (position > array->size-1)
-        return;
+        return true;
 
     if (array->size == 0) {
         if (position == 0) {
             array_push_data(array, data);
-            return;
+            return csize == array->size;
         } else
-            return;
+            return true;
     }
 
     uint32_t it = position;
@@ -118,6 +128,7 @@ void array_insert_at(array_t* array, uint32_t position, void* data) {
     }
 
     array_push_data(array, prev); // to ensure that we only have one code that will enlarge array
+    return csize == array->size;
 }
 
 /******************************************************************************//**

@@ -34,10 +34,12 @@
  ********************************************************************************/
 queue_t* create_queue() {
     queue_t* queue = (queue_t*) malloc(sizeof(queue_t));
-    queue->first = 0;
-    queue->last = 0;
-    queue->size = 0;
-    queue->is_static = false;
+    if (queue) {
+		queue->first = 0;
+		queue->last = 0;
+		queue->size = 0;
+		queue->is_static = false;
+    }
     return queue;
 }
 
@@ -48,13 +50,19 @@ queue_t* create_queue() {
  ********************************************************************************/
 queue_t* create_queue_static(uint32_t max_queue) {
     queue_t* queue = (queue_t*) malloc(sizeof(queue_t));
-    queue->first = 0;
-    queue->last = 0;
-    queue->size = 0;
-    queue->is_static = true;
-    queue->queue_pool.max_size = max_queue;
-    queue->queue_pool.pool_data = (void*) malloc(sizeof(queue_element_t) * max_queue);
-    memset(queue->queue_pool.pool_data, 0, sizeof(queue_element_t) * max_queue);
+    if (queue) {
+		queue->first = 0;
+		queue->last = 0;
+		queue->size = 0;
+		queue->is_static = true;
+		queue->queue_pool.max_size = max_queue;
+		queue->queue_pool.pool_data = (void*) malloc(sizeof(queue_element_t) * max_queue);
+		if (!queue->queue_pool.pool_data) {
+			free(queue);
+			return NULL;
+		}
+		memset(queue->queue_pool.pool_data, 0, sizeof(queue_element_t) * max_queue);
+    }
     return queue;
 }
 

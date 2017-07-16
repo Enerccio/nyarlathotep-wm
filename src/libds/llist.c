@@ -34,9 +34,11 @@
  ********************************************************************************/
 list_t* create_list() {
     list_t* list = (list_t*) malloc(sizeof(list_t));
-    list->first = 0;
-    list->last = 0;
-    list->size = 0;
+    if (list) {
+		list->first = 0;
+		list->last = 0;
+		list->size = 0;
+    }
     return list;
 }
 

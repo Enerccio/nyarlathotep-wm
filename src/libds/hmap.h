@@ -69,7 +69,7 @@ hash_table_t* create_table(hash_function_t hash_fn, eq_function_t cmpr_fn);
 void destroy_table(hash_table_t* table);
 bool table_contains(hash_table_t* table, void* key);
 void* table_get(hash_table_t* table, void* key);
-void table_set(hash_table_t* table, void* key, void* data);
+bool table_set(hash_table_t* table, void* key, void* data);
 bool table_remove(hash_table_t* table, void* key);
 uint32_t table_size(hash_table_t* table);
 hash_table_t* copy_table(hash_table_t* table);

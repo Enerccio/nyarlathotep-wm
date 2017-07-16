@@ -2,27 +2,27 @@
  * The MIT License (MIT)
  * Copyright (c) 2015 Peter Vanusanik <admin@en-circle.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to use, copy, 
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, subject to the 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the
  * following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies 
+ * The above copyright notice and this permission notice shall be included in all copies
  * or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS 
- * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+ * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * hmap.c
  *  Created on: Jan 3, 2016
  *      Author: Peter Vanusanik
- *  Contents: 
+ *  Contents:
  */
 
 #include "hmap.h"
@@ -32,13 +32,20 @@
  *
  * This hash table will use provided hash_fn and cmpr_fn to hash/compare keys.
  * Default size of inner table is HASH_STARTING_SIZE.
+ * Returns NULL on allication error.
  ********************************************************************************/
 hash_table_t* create_table(hash_function_t hash_fn, eq_function_t cmpr_fn) {
     hash_table_t* table = (hash_table_t*) malloc(sizeof(hash_table_t));
+    if (table == NULL)
+        return NULL;
     table->hash_fn = hash_fn;
     table->cmpr_fn = cmpr_fn;
     table->max_size = HASH_STARTING_SIZE;
     table->hash_table = (hash_pair_t**) malloc(sizeof(hash_pair_t*) * table->max_size);
+    if (table->hash_table == NULL) {
+        free(table);
+        return NULL;
+    }
     table->len = 0;
     memset(table->hash_table, 0, sizeof(hash_pair_t*) * table->max_size);
     return table;
@@ -86,21 +93,31 @@ static hash_pair_t**  find_cell(hash_table_t* table, void* key, uint32_t hashed,
 
 /******************************************************************************//**
  * Resizes the hash table to accomodate new elements.
+ * Returns true on failure.
  ********************************************************************************/
-static void resize_table(hash_table_t* table) {
+static bool resize_table(hash_table_t* table) {
     hash_table_t* new_table = (hash_table_t*) malloc(sizeof(hash_table_t));
+    if (new_table == NULL)
+        return true;
     new_table->hash_fn = table->hash_fn;
     new_table->cmpr_fn = table->cmpr_fn;
     new_table->len = 0;
     new_table->max_size = (table->max_size * 2) + 1;
     new_table->hash_table = (hash_pair_t**) malloc(sizeof(hash_pair_t*) * new_table->max_size);
+    if (new_table->hash_table == NULL) {
+        free (new_table);
+        return true;
+    }
     memset(new_table->hash_table, 0, sizeof(hash_pair_t*) * new_table->max_size);
 
     uint32_t i = 0;
     for (; i<table->max_size; i++) {
         hash_pair_t* cell = table->hash_table[i];
         if (cell != FREE_CELL && cell != DELETED_CELL) {
-            table_set(new_table, cell->key, cell->data);
+            if (table_set(new_table, cell->key, cell->data)) {
+            	destroy_table(new_table);
+            	return true;
+            }
             free(cell);
         }
     }
@@ -108,7 +125,9 @@ static void resize_table(hash_table_t* table) {
     free(table->hash_table);
     table->hash_table = new_table->hash_table;
     table->len = new_table->len;
+    table->max_size = new_table->max_size;
     free(new_table);
+    return false;
 }
 
 /******************************************************************************//**
@@ -139,11 +158,15 @@ void* table_get(hash_table_t* table, void* key) {
  * \brief Sets the key in the table to the data.
  *
  * Will remove old key-data pair if it exists (does not deallocate old data value!).
+ * Returns true if space for new element (or increased table size)
+ * cannot be allocated.
  ********************************************************************************/
-void table_set(hash_table_t* table, void* key, void* data) {
+bool table_set(hash_table_t* table, void* key, void* data) {
     hash_pair_t** cell = find_cell(table, key, table->hash_fn(key), true);
     if (*cell == FREE_CELL || *cell == DELETED_CELL) {
         hash_pair_t* pair = (hash_pair_t*) malloc(sizeof(hash_pair_t));
+        if (pair == NULL)
+            return true;
         pair->key = key;
         pair->data = data;
         *cell = pair;
@@ -157,6 +180,7 @@ void table_set(hash_table_t* table, void* key, void* data) {
     } else {
         // this should not happen
     }
+    return false;
 }
 
 /******************************************************************************//**

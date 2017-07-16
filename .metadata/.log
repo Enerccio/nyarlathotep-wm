@@ -1,0 +1,114 @@
+!SESSION 2017-07-16 13:25:56.970 -----------------------------------------------
+eclipse.buildId=4.6.3.M20170301-0400
+java.version=1.8.0_121
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product
+Command-line arguments:  -data /usr2/fast/projects/pinion/nyarlathotep-wm -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product
+
+!ENTRY org.eclipse.jface 2 0 2017-07-16 13:26:00.285
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2017-07-16 13:26:00.285
+!MESSAGE A conflict occurred for ALT+CTRL+P:
+Binding(ALT+CTRL+P,
+	ParameterizedCommand(Command(org.eclipse.linuxtools.changelog.core.preparechangelog,Prepare Changelog,
+		Prepares Changelog,
+		Category(org.eclipse.linuxtools.changelog,Changelog,Changelog key bindings,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@5d20195b,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+Binding(ALT+CTRL+P,
+	ParameterizedCommand(Command(org.eclipse.m2e.profiles.ui.commands.selectMavenProfileCommand,Select Maven Profiles,
+		,
+		Category(org.eclipse.ui.category.window,Window,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@2674ca88,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+
+!ENTRY org.eclipse.oomph.setup.ui 2 0 2017-07-16 13:26:06.174
+!MESSAGE java.lang.NullPointerException
+!STACK 0
+java.lang.NullPointerException
+	at org.eclipse.oomph.setup.ui.SetupUIPlugin.performStartup(SetupUIPlugin.java:443)
+	at org.eclipse.oomph.setup.ui.SetupUIPlugin.access$5(SetupUIPlugin.java:414)
+	at org.eclipse.oomph.setup.ui.SetupUIPlugin$1$1.run(SetupUIPlugin.java:253)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.rse.core 4 0 2017-07-16 13:26:06.335
+!MESSAGE Unexpected Exception
+!STACK 0
+java.net.UnknownHostException: arch-anywhere: arch-anywhere: Name or service not known
+	at java.net.InetAddress.getLocalHost(InetAddress.java:1505)
+	at org.eclipse.rse.core.RSECorePlugin.getLocalMachineName(RSECorePlugin.java:265)
+	at org.eclipse.rse.core.RSEPreferencesManager.getDefaultPrivateSystemProfileName(RSEPreferencesManager.java:358)
+	at org.eclipse.rse.core.RSEPreferencesManager.initDefaults(RSEPreferencesManager.java:337)
+	at org.eclipse.rse.internal.core.RSEPreferenceInitializer.initializeDefaultPreferences(RSEPreferenceInitializer.java:23)
+	at org.eclipse.core.internal.preferences.PreferenceServiceRegistryHelper$1.run(PreferenceServiceRegistryHelper.java:298)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.preferences.PreferenceServiceRegistryHelper.runInitializer(PreferenceServiceRegistryHelper.java:301)
+	at org.eclipse.core.internal.preferences.PreferenceServiceRegistryHelper.applyRuntimeDefaults(PreferenceServiceRegistryHelper.java:131)
+	at org.eclipse.core.internal.preferences.PreferencesService.applyRuntimeDefaults(PreferencesService.java:370)
+	at org.eclipse.core.internal.preferences.DefaultPreferences.applyRuntimeDefaults(DefaultPreferences.java:222)
+	at org.eclipse.core.internal.preferences.DefaultPreferences.load(DefaultPreferences.java:276)
+	at org.eclipse.core.internal.preferences.EclipsePreferences.create(EclipsePreferences.java:370)
+	at org.eclipse.core.internal.preferences.EclipsePreferences.internalNode(EclipsePreferences.java:623)
+	at org.eclipse.core.internal.preferences.DefaultPreferences.node(DefaultPreferences.java:147)
+	at org.eclipse.core.internal.preferences.legacy.PreferenceForwarder.getDefaultPreferences(PreferenceForwarder.java:134)
+	at org.eclipse.core.internal.preferences.legacy.PreferenceForwarder.getInt(PreferenceForwarder.java:488)
+	at org.eclipse.rse.logging.Logger.initialize(Logger.java:249)
+	at org.eclipse.rse.logging.Logger.<init>(Logger.java:135)
+	at org.eclipse.rse.logging.LoggerFactory.getLogger(LoggerFactory.java:45)
+	at org.eclipse.rse.core.RSECorePlugin.getLogger(RSECorePlugin.java:392)
+	at org.eclipse.rse.internal.core.RSEInitJob.<init>(RSEInitJob.java:133)
+	at org.eclipse.rse.internal.core.RSEInitJob.<clinit>(RSEInitJob.java:65)
+	at org.eclipse.rse.core.RSECorePlugin.waitForInitCompletion(RSECorePlugin.java:142)
+	at org.eclipse.rse.internal.ui.RSEUIInitJob.run(RSEUIInitJob.java:32)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Caused by: java.net.UnknownHostException: arch-anywhere: Name or service not known
+	at java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method)
+	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
+	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
+	at java.net.InetAddress.getLocalHost(InetAddress.java:1500)
+	... 25 more
+
+!ENTRY org.eclipse.rse.core 4 0 2017-07-16 13:26:06.422
+!MESSAGE Unexpected Exception
+!STACK 0
+java.net.UnknownHostException: arch-anywhere: arch-anywhere: Name or service not known
+	at java.net.InetAddress.getLocalHost(InetAddress.java:1505)
+	at org.eclipse.rse.core.RSECorePlugin.getLocalMachineName(RSECorePlugin.java:265)
+	at org.eclipse.rse.core.RSEPreferencesManager.getDefaultPrivateSystemProfileName(RSEPreferencesManager.java:358)
+	at org.eclipse.rse.internal.core.model.SystemProfileManager.ensureDefaultPrivateProfile(SystemProfileManager.java:477)
+	at org.eclipse.rse.internal.core.model.SystemProfileManager.getDefaultPrivateSystemProfile(SystemProfileManager.java:416)
+	at org.eclipse.rse.internal.core.RSEInitJob.run(RSEInitJob.java:207)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Caused by: java.net.UnknownHostException: arch-anywhere: Name or service not known
+	at java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method)
+	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
+	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
+	at java.net.InetAddress.getLocalHost(InetAddress.java:1500)
+	... 6 more
+
+!ENTRY org.eclipse.rse.core 4 0 2017-07-16 13:26:06.454
+!MESSAGE Unexpected Exception
+!STACK 0
+java.net.UnknownHostException: arch-anywhere: arch-anywhere: Name or service not known
+	at java.net.InetAddress.getLocalHost(InetAddress.java:1505)
+	at org.eclipse.rse.core.RSECorePlugin.getLocalMachineName(RSECorePlugin.java:265)
+	at org.eclipse.rse.core.RSEPreferencesManager.getDefaultPrivateSystemProfileName(RSEPreferencesManager.java:358)
+	at org.eclipse.rse.internal.core.model.SystemProfileManager.createDefaultPrivateProfile(SystemProfileManager.java:450)
+	at org.eclipse.rse.internal.core.model.SystemProfileManager.ensureDefaultPrivateProfile(SystemProfileManager.java:501)
+	at org.eclipse.rse.internal.core.model.SystemProfileManager.getDefaultPrivateSystemProfile(SystemProfileManager.java:416)
+	at org.eclipse.rse.internal.core.RSEInitJob.run(RSEInitJob.java:207)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Caused by: java.net.UnknownHostException: arch-anywhere: Name or service not known
+	at java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method)
+	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
+	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
+	at java.net.InetAddress.getLocalHost(InetAddress.java:1500)
+	... 7 more
+
+!ENTRY org.eclipse.oomph.setup.ui 1 0 2017-07-16 13:26:08.866
+!MESSAGE Setup tasks were performed during startup updating 25 preferences. See '/usr2/slow/home/enerccio/.eclipse/org.eclipse.platform_4.6.3_155965261_linux_gtk_x86_64/configuration/org.eclipse.oomph.setup/setup.log' for details

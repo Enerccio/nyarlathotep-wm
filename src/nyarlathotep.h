@@ -126,9 +126,4 @@ void context_closed(wlc_handle output);
 bool custom_render(wlc_handle output);
 // render.c ends
 
-// decorator.c
-uint32_t register_decorator(struct wl_client* client, struct wl_resource* connection);
-void unregister_decorator(struct wl_resource* connection);
-// decorator.c ends
-
 #endif /* NYARLATHOTEP_H_ */

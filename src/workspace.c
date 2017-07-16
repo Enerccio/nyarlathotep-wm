@@ -177,6 +177,7 @@ void workspace_set_view_hidden(workspace_t* workspace,
 
 void workspace_set_main_window(workspace_t* workspace,
 		wlc_handle view) {
+
 	if (workspace->fullscreen_view != 0) {
 		// keep fullscreening view on fullscreen
 		workspace_set_view_hidden(workspace, view);

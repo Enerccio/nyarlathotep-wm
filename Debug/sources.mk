@@ -16,6 +16,5 @@ SUBDIRS := \
 src \
 src/libds \
 src/platform \
-src/protocol \
 src/stb \
 

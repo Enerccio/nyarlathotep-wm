@@ -6,7 +6,6 @@
 C_SRCS += \
 ../src/animator.c \
 ../src/configuration.c \
-../src/decorator.c \
 ../src/keyboard_manager.c \
 ../src/launcher.c \
 ../src/mouse_manager.c \
@@ -20,7 +19,6 @@ C_SRCS += \
 OBJS += \
 ./src/animator.o \
 ./src/configuration.o \
-./src/decorator.o \
 ./src/keyboard_manager.o \
 ./src/launcher.o \
 ./src/mouse_manager.o \
@@ -34,7 +32,6 @@ OBJS += \
 C_DEPS += \
 ./src/animator.d \
 ./src/configuration.d \
-./src/decorator.d \
 ./src/keyboard_manager.d \
 ./src/launcher.d \
 ./src/mouse_manager.d \

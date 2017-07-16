@@ -43,6 +43,10 @@ extern "C" {
 #endif
 typedef REGISTER_UINT_TYPE ruint_t;
 
+#define _LIBDS_GENSYM2(x,y) __libds__##x##y##__
+#define _LIBDS_GENSYM1(x,y) _LIBDS_GENSYM2(x,y)
+#define LIBDS_GENSYM(x) _LIBDS_GENSYM1(x, __COUNTER__)
+
 #ifdef __cplusplus
 }
 #endif
